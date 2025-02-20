@@ -20,8 +20,20 @@ public class Dice : MonoBehaviour
         
     }
 
-    public void DiceRoll()
+    public void DiceRoll(GameObject player)
     {
+        int dice1,dice2,roll;
+        dice1 = Random.Range(Dice1Min, Dice1Max);
+        dice2 = Random.Range(Dice2Min, Dice2Max);
+        roll = dice1 + dice2;
+
+        Debug.Log($"ダイス１{dice1},ダイス２{dice2},合計:{roll}");
+
+
+
+        GameObject.Find($"Player").GetComponent<Player>().MovePlayer(roll);
+        
+
 
     }
 
