@@ -7,6 +7,10 @@ public class Player : MonoBehaviour
     private int trout = 0;
     private int Move = 0;
     public int direction = 1;
+    private int waitTime = 0;
+    private Vector3 TargetPos;
+    private int troutTier = 0;
+   [SerializeField] public List<Item> items = new List<Item> ();
     // Start is called before the first frame update
     void Start()
     {
@@ -16,26 +20,49 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        //プレイヤーの移動
         if (Move > 0)
         {
-            if (( GameObject.Find("GameManager").GetComponent<GameManager>().trouts.Count <= trout + direction)||
-                (0 > trout + direction))
+            if (waitTime <= 0)
             {
-                Move = 0;
-                return;
+
+                if ((GameObject.Find("GameManager").GetComponent<GameManager>().trouts.Count <= trout + direction) ||
+                    (0 > trout + direction))
+                {
+                    Move = 0;
+                        //素材取得ターンに入る
+                        ChoiceGetItem();
+                    
+                    return;
+                }
+                else
+                {
+                    TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
+                    TargetPos.y = 0.6f;
+                }
+                
+                transform.position = Vector3.MoveTowards
+                      (transform.position,
+                      TargetPos,
+                      0.01f + Time.deltaTime
+                      );
+
+
+                if (transform.position == TargetPos)
+                {
+                    Move--;
+                    trout += direction;
+                    waitTime = 30;
+                    if (Move == 0)
+                    {
+                        //素材取得ターンに入る
+                        ChoiceGetItem();
+                    }
+                }
             }
-            transform.position = Vector3.MoveTowards
-                  (transform.position,
-                  GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout+direction].transform.position,
-                  0.01f + Time.deltaTime
-                  );
-
-
-            if (transform.position == GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position)
+            else
             {
-                Move--;
-                trout += direction;
+                waitTime--;
             }
 
         }
@@ -48,4 +75,13 @@ public class Player : MonoBehaviour
         Move = roll;
     }
 
+    public void ChoiceGetItem()
+    {
+        //ダイスロール系のボタンを無効にする
+        GameObject gameObject = GameObject.Find("GameManager");
+        gameObject.GetComponent<GameManager>().DiceRollButton.SetActive(false);
+        gameObject.GetComponent<GameManager>().BackButton.SetActive(false);
+        gameObject.GetComponent<GameManager>().GetItemUI.SetActive(true);
+
+    }
 }
