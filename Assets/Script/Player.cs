@@ -10,11 +10,15 @@ public class Player : MonoBehaviour
     private int waitTime = 0;
     private Vector3 TargetPos;
     private int troutTier = 0;
-   [SerializeField] public List<Item> items = new List<Item> ();
+    private bool isStart = false;
+    private bool isGoal = false;
+   [SerializeField] public  List<List<GameObject>> items =new List<List<GameObject>>()
+   {
+       new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
+   };
     // Start is called before the first frame update
     void Start()
     {
-       // MovePlayer(4);
     }
 
     // Update is called once per frame
@@ -83,5 +87,22 @@ public class Player : MonoBehaviour
         gameObject.GetComponent<GameManager>().BackButton.SetActive(false);
         gameObject.GetComponent<GameManager>().GetItemUI.SetActive(true);
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "based")
+        {
+            if (isStart)
+            {
+                isGoal = true;
+                Debug.Log("ゴールしました");
+            }
+        }
+        else
+        {
+            isStart = true;
+            Debug.Log("スタートしました");
+        }
     }
 }
