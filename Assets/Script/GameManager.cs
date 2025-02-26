@@ -10,10 +10,29 @@ public class GameManager : MonoBehaviour
     [SerializeField]  public GameObject DiceRollButton; 
     [SerializeField] public GameObject BackButton;
     [SerializeField] public GameObject GetItemUI;
+     public static List<List<GameObject>> ItemList;
+    [SerializeField] public static List<GameObject> Tire0List;
+    [SerializeField] public static List<GameObject> Tire1List;
+    [SerializeField] public static List<GameObject> Tire2List;
+    [SerializeField] public static List<GameObject> Tire3List;
+    public static List<List<GameObject>> ExchangeButton;
+    [SerializeField] public static List<GameObject> Tire0Button;
+    [SerializeField] public static List<GameObject> Tire1Button;
+    [SerializeField] public static List<GameObject> Tire2Button;
+    [SerializeField] public static List<GameObject> Tire3Button;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        ItemList.Add(Tire0List);
+        ItemList.Add(Tire1List);
+        ItemList.Add(Tire2List);
+        ItemList.Add(Tire3List);
+
+        ExchangeButton.Add(Tire0Button);
+        ExchangeButton.Add(Tire1Button);
+        ExchangeButton.Add(Tire2Button);
+        ExchangeButton.Add(Tire3Button);
     } 
 
     // Update is called once per frame
@@ -31,8 +50,10 @@ public class GameManager : MonoBehaviour
     {
         if (Get)
         {
+            int Tire = 0;
+            int ItemID = 0;
             //はいを選択した場合
-            GameObject.Find($"Player").GetComponent<Player>().items.Add(new Item() {Tire = 0,ID = 1});
+            GameObject.Find($"Player").GetComponent<Player>().items[Tire].Add(ItemList[Tire][ItemID]);
             Debug.Log("アイテムを手に入れた!");
         }
 
