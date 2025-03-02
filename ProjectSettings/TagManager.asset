@@ -5,7 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Level1
-  - Based
+  - based
+  - Level0
+  - Level2
+  - Level3
+  - Item
   layers:
   - Default
   - TransparentFX

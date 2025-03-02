@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     private int trout = 0;
     private int Move = 0;
+    public List<int> probability = new List<int>()
+    {0,0,0,0};
     public int direction = 1;
     private int waitTime = 0;
     private Vector3 TargetPos;
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //プレイヤーの移動
         if (Move > 0)
         {
@@ -34,6 +37,7 @@ public class Player : MonoBehaviour
                     (0 > trout + direction))
                 {
                     Move = 0;
+                    GameObject.Find("GameManager").GetComponent<GameManager>().ChangeDirection();
                         //素材取得ターンに入る
                         ChoiceGetItem();
                     
@@ -42,7 +46,7 @@ public class Player : MonoBehaviour
                 else
                 {
                     TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
-                    TargetPos.y = 0.6f;
+                    TargetPos.y = 0.3f;
                 }
                 
                 transform.position = Vector3.MoveTowards
@@ -89,6 +93,34 @@ public class Player : MonoBehaviour
 
     }
 
+    public void SetHaveItem()
+    {//
+        GameObject[] Items = GameObject.FindGameObjectsWithTag("Item");
+        ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
+
+        foreach (GameObject r in Items)
+        {
+            Destroy(r);
+        }
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (items[i] != null)
+            {
+                foreach (GameObject item in items[i])
+                {
+                    GameObject textObject = Instantiate(
+                                             item,
+                                             exchangeManager.transform.position,
+                                             Quaternion.identity,
+                                             exchangeManager.parentGameObject.transform
+                                             );
+                }
+            }
+        }
+    }
+
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "based")
@@ -99,10 +131,42 @@ public class Player : MonoBehaviour
                 Debug.Log("ゴールしました");
             }
         }
-        else
+        else if (!isStart)
         {
             isStart = true;
             Debug.Log("スタートしました");
+        }
+
+        if (other.gameObject.tag == "Level0")
+        {
+            probability[0] = 70;
+            probability[1] = 30;
+            probability[2] = 0;
+            probability[3] = 0;
+        }
+
+        if (other.gameObject.tag == "Level1")
+        {
+            probability[0] = 30;
+            probability[1] = 60;
+            probability[2] = 10;
+            probability[3] = 0;
+        }
+
+        if (other.gameObject.tag == "Level2")
+        {
+            probability[0] = 0;
+            probability[1] = 30;
+            probability[2] = 60;
+            probability[3] = 10;
+        }
+
+        if (other.gameObject.tag == "Level3")
+        {
+            probability[0] = 0;
+            probability[1] = 0;
+            probability[2] = 30;
+            probability[3] = 70;
         }
     }
 }
