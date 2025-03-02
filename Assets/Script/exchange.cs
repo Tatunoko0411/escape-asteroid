@@ -7,9 +7,9 @@ public class exchange : MonoBehaviour
 {
     public int ReqNumberHigh;//必要数(高ティア→低ティア)
     public int ReqNumberLow;//必要数(低ティア→高ティア)
-    [SerializeField] public GameObject CheckBoxPrefab;
-    [SerializeField] public GameObject parentGameObject;
-    [SerializeField]public GameObject ExchangeItem;//交換後のアイテム
+
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,7 +33,7 @@ public class exchange : MonoBehaviour
                 {
                     for (int f = 0;f < 4;f++)
                     {
-                        GameManager.ExchangeButton[i][f].GetComponent<Button>().enabled = false;
+                        GameObject.Find("GameManager").GetComponent<GameManager>().ExchangeButton[i][f].GetComponent<Button>().enabled = false;
                     }
                     
                 }
@@ -45,7 +45,7 @@ public class exchange : MonoBehaviour
                 {
                     for (int f = 0; f < 4; f++)
                     {
-                        GameManager.ExchangeButton[i][f].GetComponent<Button>().enabled = false;
+                        GameObject.Find("GameManager").GetComponent<GameManager>().ExchangeButton[i][f].GetComponent<Button>().enabled = false;
                     }
                 }
             }
@@ -54,18 +54,8 @@ public class exchange : MonoBehaviour
         }
     }
 
-    public void Exchange ()
-    {
 
-    }
 
-    public void SetCheckBox(int Tire)
-    {
-        GameObject textObject = Instantiate(
-          CheckBoxPrefab,
-          parentGameObject.transform.position,
-          Quaternion.identity,
-          parentGameObject.transform
-        );
-    }
+
+
 }
