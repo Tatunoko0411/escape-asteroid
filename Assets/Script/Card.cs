@@ -2,17 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+public class Card
 {
-    // Start is called before the first frame update
-    void Start()
+    public int id;
+    public string name;
+
+
+    public int ID
     {
-        
+        set { id = value; }
+        get { return id; }
     }
 
-    // Update is called once per frame
-    void Update()
+    public string NAME
     {
-        
+        set { name = value; }
+        get { return name; }
     }
+
+
+
+
+    public Card()
+    {
+
+    }
+
+
 }
+

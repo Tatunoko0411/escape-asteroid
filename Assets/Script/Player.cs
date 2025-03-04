@@ -14,7 +14,16 @@ public class Player : MonoBehaviour
     private int troutTier = 0;
     private bool isStart = false;
     private bool isGoal = false;
-   [SerializeField] public  List<List<GameObject>> items =new List<List<GameObject>>()
+    public int id;
+
+    public int hand;
+
+    public int handCard_id;
+
+    public int handCard_id_2;
+
+    public int handCard_id_3;
+    [SerializeField] public  List<List<GameObject>> items =new List<List<GameObject>>()
    {
        new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
    };
@@ -96,7 +105,7 @@ public class Player : MonoBehaviour
     public void SetHaveItem()
     {//
         GameObject[] Items = GameObject.FindGameObjectsWithTag("Item");
-        ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
+        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         foreach (GameObject r in Items)
         {
@@ -111,9 +120,9 @@ public class Player : MonoBehaviour
                 {
                     GameObject textObject = Instantiate(
                                              item,
-                                             exchangeManager.transform.position,
+                                             gameManager.transform.position,
                                              Quaternion.identity,
-                                             exchangeManager.parentGameObject.transform
+                                             gameManager.parentGameObject.transform
                                              );
                 }
             }
