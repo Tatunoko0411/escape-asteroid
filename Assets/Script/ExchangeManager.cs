@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using static UnityEditor.Progress;
 
 public class ExchangeManager : MonoBehaviour
@@ -37,8 +38,9 @@ public class ExchangeManager : MonoBehaviour
         
     }
 
-    public void SetCheckBox(int Tire)
+    public void SetCheckBox(GameObject gameObject)
     {
+        ExchangeItem = gameObject;
         Player player = GameObject.Find("Player").GetComponent<Player>();
         GameObject[] Items = GameObject.FindGameObjectsWithTag("CheckBox");
         if (Items.Length > 0)
@@ -67,9 +69,19 @@ public class ExchangeManager : MonoBehaviour
         }
     }
 
-    public void AddCost(GameObject cost)//指定したアイテムをリストコストに指定する
+    public void AddCost(GameObject cost,Toggle toggle)//指定したアイテムをリストコストに指定する
     {
-        Cost.Add(cost);
+
+        switch(toggle.isOn)
+        {
+            case true:
+                Cost.Add(cost);
+                break;
+            case false:
+                Cost.Remove(cost);
+                break;
+        }
+       
     }
 
     public void Exchange()//交換

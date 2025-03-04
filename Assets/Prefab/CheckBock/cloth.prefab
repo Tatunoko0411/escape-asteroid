@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e8aee279f15e71847a1a2f718d499942, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3cec58ae0e0b1af49b319cd8115678e3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -242,7 +242,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3238434420316213017, guid: e1f1c3a768ea96c4fa4f6d4656fd2c50, type: 3}
+        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
+        m_MethodName: AddCost
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 1965581278709192921, guid: 8bb27f4d41d76f245a83dd5ad81692d5, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &3646936564892557838
 GameObject:

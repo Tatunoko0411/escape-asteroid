@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8300799848797239891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 851264676223722566}
+  - component: {fileID: 3238434420316213017}
+  m_Layer: 0
+  m_Name: ExchangeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &851264676223722566
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8300799848797239891}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6, y: -39, z: 26.059212}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3238434420316213017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8300799848797239891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e22d3c7625e6c4098c8afd16fce622, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CheckBoxPrefab: {fileID: 0}
+  parentGameObject: {fileID: 0}
+  ExchangeItem: {fileID: 0}
+  Tire0Button:
+  - {fileID: 1818895875798595578, guid: 399e1dc33b57eff4d9ef2809183914f7, type: 3}
+  - {fileID: 5400722431492851757, guid: de7df3866769bc540ad1e2402ec58d38, type: 3}
+  - {fileID: 2527033668574542308, guid: 9456aa223537dea46bfa44c7359b24fd, type: 3}
+  - {fileID: 8024963610491101038, guid: b79074a349d8b3641affb83ae60a5761, type: 3}
+  Tire1Button:
+  - {fileID: 4064319425299504104, guid: 621ce8c4c8d0ace438a2d6269ff5c313, type: 3}
+  - {fileID: 5768671851615750941, guid: b2492b6040e7ac645ade1f23726f4124, type: 3}
+  - {fileID: 1977730421684677787, guid: b5bb398c75f4eac4db98235cf4a8b6e1, type: 3}
+  - {fileID: 7399485122771857689, guid: 71398baf539783f43b89e1e172e3f1d5, type: 3}
+  Tire2Button:
+  - {fileID: 1408176091435426799, guid: 321073c51a711f64fa456a6a56828d49, type: 3}
+  - {fileID: 8898406116420935052, guid: 78dc12a8b5d2ce141993de5b57415f28, type: 3}
+  - {fileID: 3300957809153441595, guid: 4b442f7bfb7612e40bc597eb291cd8c2, type: 3}
+  - {fileID: 7283860833221358963, guid: 28a4762dda8ff964d87e2e9a7d0cbf38, type: 3}
+  Tire3Button:
+  - {fileID: 6157879859061987565, guid: 80cc7ec6600c6f0419820f9eabcd0cd1, type: 3}
+  - {fileID: 3110166725878380382, guid: f8136b5b746f9b64aaac94546bf86dbd, type: 3}
+  - {fileID: 5368968463217214043, guid: b64d76ae720373e4fbef2eeee2b30c50, type: 3}
+  Cost: []
