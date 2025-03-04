@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class ExchangeManager : MonoBehaviour
 {
@@ -12,10 +13,22 @@ public class ExchangeManager : MonoBehaviour
 
     [SerializeField] public GameObject ExchangeItem;//交換後のアイテム
 
+    [SerializeField] public List<GameObject> Tire0Button;
+    [SerializeField] public List<GameObject> Tire1Button;
+    [SerializeField] public List<GameObject> Tire2Button;
+    [SerializeField] public List<GameObject> Tire3Button;
+
+    public List<List<GameObject>> ExchangeButton = new List<List<GameObject>>();
+
     public List<GameObject> Cost;
     // Start is called before the first frame update
     void Start()
     {
+
+        ExchangeButton.Add(Tire0Button);
+        ExchangeButton.Add(Tire1Button);
+        ExchangeButton.Add(Tire2Button);
+        ExchangeButton.Add(Tire3Button);
     }
 
     // Update is called once per frame
@@ -26,12 +39,32 @@ public class ExchangeManager : MonoBehaviour
 
     public void SetCheckBox(int Tire)
     {
-        GameObject textObject = Instantiate(
-          CheckBoxPrefab,
-          parentGameObject.transform.position,
-          Quaternion.identity,
-          parentGameObject.transform
-        );
+        Player player = GameObject.Find("Player").GetComponent<Player>();
+        GameObject[] Items = GameObject.FindGameObjectsWithTag("CheckBox");
+        if (Items.Length > 0)
+        {
+            foreach (GameObject r in Items)
+            {
+                Destroy(r);
+            }
+        }
+
+        for (int i = 0; i < player.items.Count; i++)
+        {
+            if (player.items[i] != null)
+            {
+                foreach (GameObject item in player.items[i])
+                {
+                    Item item1 = item.GetComponent<Item>(); 
+                    GameObject textObject = Instantiate(
+                                             ExchangeButton[item1.Tire][item1.ID],
+                                             parentGameObject.transform.position,
+                                             Quaternion.identity,
+                                             parentGameObject.transform
+                                             );
+                }
+            }
+        }
     }
 
     public void AddCost(GameObject cost)//指定したアイテムをリストコストに指定する

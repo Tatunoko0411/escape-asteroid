@@ -15,14 +15,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] public  List<GameObject> Tire2List;
     [SerializeField] public  List<GameObject> Tire3List;
 
-    [SerializeField] public  List<GameObject> Tire0Button;
-    [SerializeField] public  List<GameObject> Tire1Button;
-    [SerializeField] public  List<GameObject> Tire2Button;
-    [SerializeField] public  List<GameObject> Tire3Button;
+
     public List<List<GameObject>> ItemList = new List<List<GameObject>>();
 
-    public List<List<GameObject>> ExchangeButton = new List<List<GameObject>>();
-
+    [SerializeField] public GameObject parentGameObject;
 
     // Start is called before the first frame update
     void Start()
@@ -32,10 +28,6 @@ public class GameManager : MonoBehaviour
         ItemList.Add(Tire2List);
         ItemList.Add(Tire3List);
 
-        //ExchangeButton.Add(Tire0Button);
-        //ExchangeButton.Add(Tire1Button);
-        //ExchangeButton.Add(Tire2Button);
-        //ExchangeButton.Add(Tire3Button);
     } 
 
     // Update is called once per frame
@@ -85,9 +77,9 @@ public class GameManager : MonoBehaviour
             Debug.Log($"ƒAƒCƒeƒ€‚ðŽè‚É“ü‚ê‚½!Tire{Tire},{kinds}");
             GameObject textObject = Instantiate(
                                      ItemList[Tire][kinds],
-                                     exchangeManager.transform.position,
+                                     parentGameObject.transform.position,
                                      Quaternion.identity,
-                                     exchangeManager.parentGameObject.transform
+                                     parentGameObject.transform
                                      );
         }
 
