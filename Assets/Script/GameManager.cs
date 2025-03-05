@@ -5,7 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    public static List<GameObject> trouts;
+    [SerializeField] public List<GameObject> trouts;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,5 +17,10 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void ChangeDirection()
+    {
+        GameObject.Find($"Player").GetComponent<Player>().direction = - GameObject.Find($"Player").GetComponent<Player>().direction ;
     }
 }
