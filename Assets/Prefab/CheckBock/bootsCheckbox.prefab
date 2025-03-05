@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6968415166745178482}
   - component: {fileID: 508698527089675208}
   m_Layer: 5
-  m_Name: boots
+  m_Name: bootsCheckbox
   m_TagString: CheckBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86,12 +86,24 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3238434420316213017, guid: e1f1c3a768ea96c4fa4f6d4656fd2c50, type: 3}
+      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
+        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
+        m_MethodName: GetToggle
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 2527033668574542308}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
         m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
         m_MethodName: AddCost
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 6314781902103558211, guid: b84e3b25e026edc4284e79296da1a0eb, type: 3}
+          m_ObjectArgument: {fileID: 6314781902103558211, guid: ca1fab646e735a242ad435a1495251f4, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -322,7 +334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4a6af3a36954a074c81448f42d7d3213, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 99951699f5664344784989aec1ef07db, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
