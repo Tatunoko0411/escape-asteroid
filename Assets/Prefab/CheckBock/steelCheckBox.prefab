@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8e052a15cc1f0664b8f1f224f3b93423, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 414b25a38b489f446ad164ab90d70d3c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -319,13 +319,37 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3238434420316213017, guid: e1f1c3a768ea96c4fa4f6d4656fd2c50, type: 3}
+      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
+        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
+        m_MethodName: GetToggle
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7399485122771857689}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
         m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
         m_MethodName: AddCost
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 819033942728987344, guid: cb21a00205b948e44abedbd3b80264f6, type: 3}
+          m_ObjectArgument: {fileID: 819033942728987344, guid: d340c4d3c608c1b458a0b3fa98eb0a7c, type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

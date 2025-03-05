@@ -22,6 +22,7 @@ public class ExchangeManager : MonoBehaviour
     public List<List<GameObject>> ExchangeButton = new List<List<GameObject>>();
 
     public List<GameObject> Cost;
+    private Toggle toggle;
     // Start is called before the first frame update
     void Start()
     {
@@ -69,10 +70,10 @@ public class ExchangeManager : MonoBehaviour
         }
     }
 
-    public void AddCost(GameObject cost,Toggle toggle)//指定したアイテムをリストコストに指定する
+    public void AddCost(GameObject cost)//指定したアイテムをリストコストに指定する
     {
-
-        switch(toggle.isOn)
+        
+        switch (toggle.isOn)
         {
             case true:
                 Cost.Add(cost);
@@ -84,22 +85,35 @@ public class ExchangeManager : MonoBehaviour
        
     }
 
+    public void GetToggle(GameObject gameObject)
+    {
+        toggle = gameObject.GetComponent<Toggle>();
+    }
+
     public void Exchange()//交換
     {
         Player player = GameObject.Find("Player").GetComponent<Player>();
         for (int i = 0; i < Cost.Count; i++)
         {
-            for (int z = 0; z < player.items[ExchangeItem.GetComponent<Item>().Tire].Count; z++)
+            for (int z = 0; z < player.items.Count; z++)
             {
-                if (player.items[ExchangeItem.GetComponent<Item>().Tire][z].GetComponent<Item>().ID == Cost[i].GetComponent<Item>().ID)
+                if (player.items[z] != null)
                 {
-                    player.items[ExchangeItem.GetComponent<Item>().Tire].Remove(player.items[ExchangeItem.GetComponent<Item>().Tire][z]);
-                    break;
+                     for(int x = 0;x < player.items[z].Count; x++)
+                    {
+                        if (player.items[z][x] == Cost[i])
+                        {
+                            player.items[z].Remove(Cost[i]);
+                            player.items[ExchangeItem.GetComponent<Item>().Tire].Add(ExchangeItem);
+                            return;
+                        }
+                    }
                 }
             }
 
         }
 
-        player.items[ExchangeItem.GetComponent<Item>().Tire].Add(ExchangeItem);
+       
+
     }
 }
