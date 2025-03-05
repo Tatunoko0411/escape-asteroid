@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     private int troutTier = 0;
     private bool isStart = false;
     private bool isGoal = false;
+
     public int id;
 
     public int hand;
