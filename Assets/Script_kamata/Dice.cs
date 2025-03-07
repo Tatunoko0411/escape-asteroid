@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour
 {
+    [SerializeField] GameManager gameManager;
     public int Dice1Max;
     public int Dice2Max;
     public int Dice1Min;
@@ -22,6 +23,8 @@ public class Dice : MonoBehaviour
 
     public void DiceRoll(GameObject player)
     {
+        gameManager.isDiceRoll = true;
+
         int dice1,dice2,roll;
         dice1 = Random.Range(Dice1Min, Dice1Max);
         dice2 = Random.Range(Dice2Min, Dice2Max);
@@ -32,7 +35,6 @@ public class Dice : MonoBehaviour
 
 
         GameObject.Find($"Player").GetComponent<Player>().MovePlayer(roll);
-        
 
 
     }

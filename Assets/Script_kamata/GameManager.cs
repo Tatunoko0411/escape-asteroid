@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] public  List<GameObject> Tire1List;
     [SerializeField] public  List<GameObject> Tire2List;
     [SerializeField] public  List<GameObject> Tire3List;
+    public bool isGetItem = false;
+    public bool isDiceRoll = false;
+
+
 
 
     public List<List<GameObject>> ItemList = new List<List<GameObject>>();
@@ -82,9 +86,8 @@ public class GameManager : MonoBehaviour
                                      parentGameObject.transform
                                      );
         }
+        isDiceRoll = false;
+        isGetItem = false;
 
-        DiceRollButton.SetActive(true);
-        BackButton.SetActive(true);
-        GetItemUI.SetActive(false);
     }
 }

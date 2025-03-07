@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8554493507652341535
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9003472235548958781}
+  - component: {fileID: 6609367382153071475}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9003472235548958781
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554493507652341535}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.9032815, y: 2.2270327, z: -4.4713893}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6609367382153071475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8554493507652341535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bec0abcfe0eeb34bb3515d87d251b2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trouts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  DiceRollButton: {fileID: 0}
+  BackButton: {fileID: 0}
+  GetItemUI: {fileID: 0}
+  Tire0List:
+  - {fileID: 4788152139864194694, guid: ebfcad342a6f9a446a274166f173b0ed, type: 3}
+  - {fileID: 4689810184042060636, guid: 51d1c49dd316d2e4eaae215d0dcaef1b, type: 3}
+  - {fileID: 6314781902103558211, guid: ca1fab646e735a242ad435a1495251f4, type: 3}
+  - {fileID: 1748931249382644094, guid: 3f092ba8b0af4bb45996d37f6546fa7a, type: 3}
+  Tire1List:
+  - {fileID: 7086629225821744304, guid: 7df3264b5c9ae81418113378eda8256c, type: 3}
+  - {fileID: 4914474371506919697, guid: fb87f9236caa6c74ea51f4f32bbd2782, type: 3}
+  - {fileID: 799582886361939029, guid: 5829663930d5f8a4395d395d031decc6, type: 3}
+  - {fileID: 819033942728987344, guid: d340c4d3c608c1b458a0b3fa98eb0a7c, type: 3}
+  Tire2List:
+  - {fileID: 1965581278709192921, guid: 0d96c3f348dd4b14c97aa7a237d63431, type: 3}
+  - {fileID: 5111260868898196124, guid: 56644725830f811468fc0dde5598b40e, type: 3}
+  - {fileID: 6764524972910182285, guid: 8a0ba1fa69e3d5b4482dec0a6f084b0b, type: 3}
+  - {fileID: 4345689732436674597, guid: a35465afa0c9dcc4db7f18edf1264130, type: 3}
+  Tire3List:
+  - {fileID: 6329448751830843577, guid: 3cafe88b4b848734e8536f0d452ef83f, type: 3}
+  - {fileID: 4819002313368458070, guid: 2d0e46dd57389eb45bfb7055c592538c, type: 3}
+  - {fileID: 4015805354287497301, guid: f3eb800e0ff249147ab64559b503fd2d, type: 3}
+  parentGameObject: {fileID: 0}

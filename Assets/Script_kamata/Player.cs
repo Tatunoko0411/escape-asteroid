@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] GameManager gameManager;
     private int trout = 0;
     private int Move = 0;
     public List<int> probability = new List<int>()
@@ -12,8 +13,9 @@ public class Player : MonoBehaviour
     private int waitTime = 0;
     private Vector3 TargetPos;
     private int troutTier = 0;
-    private bool isStart = false;
-    private bool isGoal = false;
+    public bool isStart = false;
+    public bool isGoal = false;
+
     public int id;
 
     public int hand;
@@ -23,7 +25,8 @@ public class Player : MonoBehaviour
     public int handCard_id_2;
 
     public int handCard_id_3;
-    [SerializeField] public  List<List<GameObject>> items =new List<List<GameObject>>()
+    [SerializeField]
+    public List<List<GameObject>> items = new List<List<GameObject>>()
    {
        new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
    };
@@ -47,9 +50,9 @@ public class Player : MonoBehaviour
                 {
                     Move = 0;
                     GameObject.Find("GameManager").GetComponent<GameManager>().ChangeDirection();
-                        //素材取得ターンに入る
-                        ChoiceGetItem();
-                    
+                    //素材取得ターンに入る
+                    ChoiceGetItem();
+
                     return;
                 }
                 else
@@ -57,7 +60,7 @@ public class Player : MonoBehaviour
                     TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
                     TargetPos.y = 0.3f;
                 }
-                
+
                 transform.position = Vector3.MoveTowards
                       (transform.position,
                       TargetPos,
@@ -95,10 +98,8 @@ public class Player : MonoBehaviour
     public void ChoiceGetItem()
     {
         //ダイスロール系のボタンを無効にする
-        GameObject gameObject = GameObject.Find("GameManager");
-        gameObject.GetComponent<GameManager>().DiceRollButton.SetActive(false);
-        gameObject.GetComponent<GameManager>().BackButton.SetActive(false);
-        gameObject.GetComponent<GameManager>().GetItemUI.SetActive(true);
+        GameObject gameObject = GameObject.Find("GameManager");//UIManagerで管理する
+        gameManager.isGetItem = true;
 
     }
 
@@ -139,11 +140,12 @@ public class Player : MonoBehaviour
                 isGoal = true;
                 Debug.Log("ゴールしました");
             }
-        }
-        else if (!isStart)
-        {
-            isStart = true;
-            Debug.Log("スタートしました");
+            else
+            {
+                isStart = true;
+                Debug.Log("スタートしました");
+            }
+
         }
 
         if (other.gameObject.tag == "Level0")

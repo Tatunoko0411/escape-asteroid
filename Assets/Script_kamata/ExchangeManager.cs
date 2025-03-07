@@ -72,17 +72,17 @@ public class ExchangeManager : MonoBehaviour
 
     public void AddCost(GameObject cost)//指定したアイテムをリストコストに指定する
     {
-        
+        ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
         switch (toggle.isOn)
         {
             case true:
-                Cost.Add(cost);
+                exchangeManager.Cost.Add(cost);
                 break;
             case false:
-                Cost.Remove(cost);
+                exchangeManager.Cost.Remove(cost);
                 break;
         }
-       
+
     }
 
     public void GetToggle(GameObject gameObject)

@@ -1,0 +1,51 @@
+diff a/Assets/Editor/HierarchyGUI.cs b/Assets/Editor/HierarchyGUI.cs	(rejected hunks)
+@@ -0,0 +1,48 @@
++﻿//ヒエラルキーでオブジェクトのアクティブ状況を変えられるようにするやつ
++
++using UnityEditor;
++using UnityEngine;
++
++public static class HierarchyGUI
++{
++    //ヒエラルキーに表示するトグルのクリック判定の幅
++    private const int width = 160;
++    //ヒエラルキーに表示するトグルのposXをどれくらい移動させるか
++    private const int offset = 10;
++
++    [InitializeOnLoadMethod]
++    private static void Intialize()
++    {
++        EditorApplication.hierarchyWindowItemOnGUI += OnGUI;
++    }
++
++    private static void OnGUI(int instanceID, Rect selectionRect)
++    {
++        //instanceIDをGameObject参照に変換
++        GameObject go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
++
++        if (go == null)
++        {
++            return;
++        }
++
++        //トグル生成位置指定
++        Rect pos = selectionRect;
++        //ヒエラルキーの端からoffset分だけトグルの位置を動かす
++        pos.x = pos.xMax - offset;
++        //トグルの幅設定
++        pos.width = width;
++
++        //posで指定した位置にトグルを生成し、オブジェクトのアクティブ状況を切り替えられるようにする
++        bool active = GUI.Toggle(pos, go.activeSelf, string.Empty);
++
++        if (active == go.activeSelf)
++        {
++            return;
++        }
++
++        Undo.RecordObject(go, $"{(active ? "Activate" : "Deactivate")} GameObject '{go.name}'");
++        go.SetActive(active);
++        EditorUtility.SetDirty(go);
++    }
++}
+\ No newline at end of file
