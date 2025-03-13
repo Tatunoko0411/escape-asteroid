@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
@@ -17,10 +18,13 @@ public class CardManager : MonoBehaviour
     public int randMax = 50;
     public int randMin = 0;
     public int randAns;
+    
+
 
     public bool luckyCharm;
     public bool homingInstinct;
     public bool goodShoping;
+    public bool breathHold;
 
     Dice dice;
     GameManager gameManager;
@@ -42,129 +46,65 @@ public class CardManager : MonoBehaviour
             {
 
                 id = 2,
-                name = "_‘fƒ{ƒ“ƒx",
+                name = "‘§~‚ß",
                 
             },
             new Card
             {
                 id = 3,
-                name = "•s–@“ŠŠü",
+                name = "‹Ù‹}•â‹‹",
                 
             },
             new Card
             {
                 id = 4,
-                name = "‘§~‚ß",
+                name = "”E‚Ñ‘«",
                 
 
             },
             new Card
             {
                 id = 5,
-                name = "‹Ù‹}•â‹‹",
+                name = "I––Œv",
                
             },
             new Card
             {
                 id = 6,
-                name = "‚·‚è‘Ö‚¦",
+                name = "K‰^‚Ì‚¨ç‚è",
                
             },
             new Card
             {
                 id = 7,
-                name = "–WŠQHì",
+                name = "‹A‘ƒ–{”\",
                
             },
             new Card
             {
                 id = 8,
-                name = "”E‚Ñ‘«",
+                name = "”ƒ‚¢•¨ãè",
                
             },
             new Card
             {
                 id = 9,
-                name = "–¢’m‚Ö‚Ì‹°•|",
+                name = "”L‚Ìè",
                
 
             },
             new Card
             {
                 id = 10,
-                name = "Šiã‚°",
+                name = "ƒeƒZƒEƒX‚Ì‘D",
                
             },
             new Card
             {
                 id = 11,
-                name = "3DƒvƒŠƒ“ƒ^["
-            },
-            new Card
-            {
-                id = 12,
-                name = "‰F’ˆ‚Ì‹C‚Ü‚®‚ê"
-            },
-            new Card
-            {
-                id = 13,
-                name = "I––Œv"
-            },
-            new Card
-            {
-                id = 14,
-                name = "K‰^‚Ì‚¨ç‚è"
-            },
-            new Card
-            {
-                id = 15,
-                name = "–³ŠÖS"
-            },
-            new Card
-            {
-                id = 16,
-                name = "‹A‘ƒ–{”\"
-            },
-            new Card
-            {
-                id = 17,
-                name = "ƒCƒJƒTƒ}"
-            },
-            new Card
-            {
-                id = 18,
-                name = "”ƒ‚¢•¨ãè"
-            },
-            new Card
-            {
-                id = 19,
-                name = "”L‚Ìè"
-            },
-            new Card
-            {
-                id = 20,
-                name = "µ•Ï‰»"
-            },
-            new Card
-            {
-                id = 21,
-                name = "ƒeƒZƒEƒX"
-            },
-           new Card
-            {
-                id = 22,
                 name = "‘¬“x§ŒÀ"
             },
-           new Card
-            {
-                id = 23,
-                name = "‰F’ˆ‚ÌŠïÕ"
-            },
-           new Card
-            {
-                id = 24,
-                name = "“™‰¿ŒğŠ·"
-            },
+            
        };
 
     List<Player> players = new List<Player>();
@@ -245,52 +185,37 @@ public class CardManager : MonoBehaviour
                     dice.Dice2Min = 4;  
 
                     break;
+                
                 case 2:
+
+                    breathHold = true;
 
                     break;
                 case 3:
 
+                    player.oxygen += 3;
+
                     break;
+               
                 case 4:
-
-                    break;
-                case 5:
-
-                    break;
-                case 6:
-
-                    break;
-                case 7:
-
-                    break;
-                case 8:
 
                     GameObject.Find($"Player").GetComponent<Player>().MovePlayer(-1);
 
                     break;
-                case 9:
+               
+                case 5:
+
+                    randAns = Random.Range(1, 3);
+                    player.oxygen -= randAns;
+                    Debug.Log($"{randAns}‚Ì_‘f‚ª•úo‚³‚ê‚½");
 
                     break;
-                case 10:
-
-                    break;
-                case 11:
-
-                    break;
-                case 12:
-
-                    break;
-                case 13:
-
-                    break;
-                case 14:
+                case 6:
                     //gamemanager‚É‚Äˆ—
                     luckyCharm = true;
                     break;
-                case 15:
-
-                    break;
-                case 16:
+               
+                case 7:
                     //dice‚É‚Äˆ—
                     //‹AŠÒ‚Ì‚İ
                     if(gameManager.BackButton == false)
@@ -299,15 +224,13 @@ public class CardManager : MonoBehaviour
                     }
 
                     break;
-                case 17:
-
-                    break;
-                case 18:
+                
+                case 8:
                     //exchange‚É‚Äˆ—
                     goodShoping = true;
 
                     break;
-                case 19:
+                case 9:
                     int Tire = 0;
                     int kinds = 0;
                      player = GameObject.Find($"Player").GetComponent<Player>();
@@ -340,13 +263,8 @@ public class CardManager : MonoBehaviour
                     
 
                     break;
-                case 20:
-                    
-
-
-
-                    break;
-                case 21:
+               
+                case 10:
                     if (players[0].hand == 0)//g—p‰Â”\‚ÈèD‚ª‚È‚¢‚Æ‚«‚Í•ÏX‚µ‚È‚¢
                     {
                         Debug.Log("èD‚ª‚ ‚è‚Ü‚¹‚ñ");
@@ -423,21 +341,14 @@ public class CardManager : MonoBehaviour
 
 
                     break;
-                case 22:
+                case 11:
 
                     dice.Dice1Max = 2;
                     dice.Dice2Max = 2;
 
 
                     break;
-                case 23:
-
-                    break;
-                case 24:
-
-
-
-                    break;
+               
             }
 
             players[0].hand -= 1;

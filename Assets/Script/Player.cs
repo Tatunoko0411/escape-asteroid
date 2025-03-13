@@ -19,10 +19,14 @@ public class Player : MonoBehaviour
     public int hand;
 
     public int handCard_id;
-
     public int handCard_id_2;
-
     public int handCard_id_3;
+
+    public int oxygen = 100;
+
+    Item item;
+    CardManager cardManager;
+
     [SerializeField] public  List<List<GameObject>> items =new List<List<GameObject>>()
    {
        new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
@@ -129,7 +133,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void reduceOxygen()
+    {
+        int ItemCount = 0;
+        for (int i = 0; i < items.Count; i++)
+        {
+            ItemCount += items[i].Count;
+        }
 
+        //‹Ù‹}•â‹‹g—p
+        if(cardManager.breathHold  == true)
+        {
+            ItemCount = 0;
+            cardManager.breathHold = false;
+        }
+
+        oxygen -= ItemCount;
+        Debug.Log($"c‚è{oxygen}");
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "based")
@@ -178,4 +199,6 @@ public class Player : MonoBehaviour
             probability[3] = 70;
         }
     }
+
+
 }
