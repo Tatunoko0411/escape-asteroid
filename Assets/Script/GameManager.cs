@@ -20,6 +20,11 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public GameObject parentGameObject;
 
+    CardManager cardManager;
+    public int randMax = 50;
+    public int randMin = 0;
+    public int randAns;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +41,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void ChangeDirection()
+    public void ChangeDirection()   //帰還ボタン使用時
     {
         GameObject.Find($"Player").GetComponent<Player>().direction = - GameObject.Find($"Player").GetComponent<Player>().direction ;
         BackButton.GetComponent<Button>().interactable = false ;
@@ -72,6 +77,8 @@ public class GameManager : MonoBehaviour
                 Tire = 3;
                 kinds = Random.Range(0, 3);
             }
+
+
             ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();   
             GameObject.Find($"Player").GetComponent<Player>().items[Tire].Add(ItemList[Tire][kinds]);
             Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
@@ -81,6 +88,32 @@ public class GameManager : MonoBehaviour
                                      Quaternion.identity,
                                      parentGameObject.transform
                                      );
+
+            //幸運のお守り発動中
+            if (cardManager.luckyCharm == true)
+            {
+                randAns = Random.Range(randMin, randMax);
+               
+
+                //30%の確率で複製
+                if(randAns <= 15)
+                {
+
+                    exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
+                    GameObject.Find($"Player").GetComponent<Player>().items[Tire].Add(ItemList[Tire][kinds]);
+                    Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
+                    textObject = Instantiate(
+                                            ItemList[Tire][kinds],
+                                            parentGameObject.transform.position,
+                                            Quaternion.identity,
+                                            parentGameObject.transform
+                                            );
+                }
+                
+            }
+
+
+
         }
 
         DiceRollButton.SetActive(true);

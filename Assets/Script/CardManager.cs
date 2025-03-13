@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public class CardManager : MonoBehaviour
@@ -12,7 +13,21 @@ public class CardManager : MonoBehaviour
     public int hand_1;  //カードのランダム判定
     public int hand_2;
     public int hand_3;
+
+    public int randMax = 50;
+    public int randMin = 0;
+    public int randAns;
+
+    public bool luckyCharm;
+    public bool homingInstinct;
+    public bool goodShoping;
+
+    Dice dice;
+    GameManager gameManager;
+    Player player;
+    ExchangeManager exchangeManager;
     
+
 
 
     Card[] Card = new Card[]
@@ -159,9 +174,7 @@ public class CardManager : MonoBehaviour
 
         SetHand();
         
-        
 
-        
 
     }
 
@@ -176,6 +189,7 @@ public class CardManager : MonoBehaviour
 
     public void CardAction(int CardNum)
     {
+        int haveCardSet = 0;
         int playCard  = 0;
         if (players[0].hand > 0)    //カードの残数確認
         {
@@ -225,7 +239,10 @@ public class CardManager : MonoBehaviour
             switch (playCard)    //使うカードの効果判定、処理
             {
                 //各カードの効果処理(カードのidにて判定)
-                case 1: 
+                case 1:
+                    //456賽はdice2で変更
+                    dice.Dice2Max = 6;
+                    dice.Dice2Min = 4;  
 
                     break;
                 case 2:
@@ -248,6 +265,8 @@ public class CardManager : MonoBehaviour
                     break;
                 case 8:
 
+                    GameObject.Find($"Player").GetComponent<Player>().MovePlayer(-1);
+
                     break;
                 case 9:
 
@@ -265,36 +284,158 @@ public class CardManager : MonoBehaviour
 
                     break;
                 case 14:
-
+                    //gamemanagerにて処理
+                    luckyCharm = true;
                     break;
                 case 15:
 
                     break;
                 case 16:
+                    //diceにて処理
+                    //帰還時のみ
+                    if(gameManager.BackButton == false)
+                    {
+                        homingInstinct = true;
+                    }
 
                     break;
                 case 17:
 
                     break;
                 case 18:
+                    //exchangeにて処理
+                    goodShoping = true;
 
                     break;
                 case 19:
+                    int Tire = 0;
+                    int kinds = 0;
+                     player = GameObject.Find($"Player").GetComponent<Player>();
+
+                    randAns = Random.Range(randMin, randMax);
+
+                    
+                    //約25%でティア1の素材獲得
+                    if(randAns >= 14)//25%は12.5なので13まで獲得とする
+                    {
+                        Tire = 0;
+                    }
+                    else
+                    {
+                        Tire = 1;
+                    }
+
+                    kinds = Random.Range(0, 4);
+
+                    exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
+                    GameObject.Find($"Player").GetComponent<Player>().items[Tire].Add(gameManager.ItemList[Tire][kinds]);
+                    Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
+                    GameObject textObject = Instantiate(
+                                             gameManager.ItemList[Tire][kinds],
+                                             gameManager.parentGameObject.transform.position,
+                                             Quaternion.identity,
+                                             gameManager.parentGameObject.transform
+                                             );
+
+                    
 
                     break;
                 case 20:
+                    
+
+
 
                     break;
                 case 21:
+                    if (players[0].hand == 0)//使用可能な手札がないときは変更しない
+                    {
+                        Debug.Log("手札がありません");
+                    }
+                    else
+                    {
+                        if (usedCard1 == false)
+                        {
+                            haveCardSet = players[0].handCard_id;
+                            hand_1 = Random.Range(1, 24);//1枚目
+                            while (true)
+                            {
+                                if (hand_1 == haveCardSet)
+                                {
+                                    hand_1 = Random.Range(1, 24);//1枚目
+                                }
+                                else
+                                {
+                                    players[0].handCard_id = hand_1;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (usedCard2 == false)
+                        {
+                            haveCardSet = players[0].handCard_id_2;
+                            hand_2 = Random.Range(1, 24);
+
+                            while (true)
+                            {
+                                if (hand_1 == hand_2 || hand_2 == haveCardSet)//２枚目の変更
+                                {
+                                    hand_2 = Random.Range(1, 24);
+
+                                }
+                                else
+                                {
+                                    players[0].handCard_id_2 = hand_2;
+                                    break;
+                                }
+                            }
+
+
+                        }
+
+                        if (usedCard3 == false)
+                        {
+                            haveCardSet = players[0].handCard_id_3;
+                            hand_2 = Random.Range(1, 24);
+
+                            while (true)
+                            {
+                                if (hand_1 == hand_2 || hand_2 == haveCardSet)//２枚目の変更
+                                {
+                                    hand_2 = Random.Range(1, 24);
+
+                                }
+                                else
+                                {
+                                    players[0].handCard_id_3 = hand_3;
+
+                                    break;
+                                }
+                            }
+
+
+                        }
+
+                        Debug.Log($"手札 1枚目:{players[0].handCard_id} ２枚目:{players[0].handCard_id_2} ３枚目:{players[0].handCard_id_3}");
+
+                    }
+
+
 
                     break;
                 case 22:
+
+                    dice.Dice1Max = 2;
+                    dice.Dice2Max = 2;
+
 
                     break;
                 case 23:
 
                     break;
                 case 24:
+
+
 
                     break;
             }
@@ -362,6 +503,15 @@ public class CardManager : MonoBehaviour
         usedCard1 = false;
         usedCard2 = false;
         usedCard3 = false;
+
+        //カードの効果を無効にする
+        
+        luckyCharm = false;
+        homingInstinct = false;
+        goodShoping = false;
+
+
+
 
     }
 

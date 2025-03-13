@@ -9,7 +9,7 @@ public class exchange : MonoBehaviour
     private int ReqNumberLow = 3;//必要数(低ティア→高ティア)
 
     public int ItemTire;
-    
+    CardManager cardManager;
 
     // Start is called before the first frame update
     void Start()
@@ -20,6 +20,10 @@ public class exchange : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(cardManager.goodShoping == true)
+        {
+            ReqNumberLow = 2;
+        }
         bool isuse = false;
         Player player = GameObject.Find("Player").GetComponent<Player>();
 
