@@ -199,6 +199,7 @@ public class CardManager : MonoBehaviour
                
                 case 4:
 
+                    //プレイヤー指定の処理不足
                     GameObject.Find($"Player").GetComponent<Player>().MovePlayer(-1);
 
                     break;
@@ -274,12 +275,12 @@ public class CardManager : MonoBehaviour
                         if (usedCard1 == false)
                         {
                             haveCardSet = players[0].handCard_id;
-                            hand_1 = Random.Range(1, 24);//1枚目
+                            hand_1 = Random.Range(1, Card.Length + 1);//1枚目
                             while (true)
                             {
                                 if (hand_1 == haveCardSet)
                                 {
-                                    hand_1 = Random.Range(1, 24);//1枚目
+                                    hand_1 = Random.Range(1, Card.Length + 1);//1枚目
                                 }
                                 else
                                 {
@@ -292,13 +293,13 @@ public class CardManager : MonoBehaviour
                         if (usedCard2 == false)
                         {
                             haveCardSet = players[0].handCard_id_2;
-                            hand_2 = Random.Range(1, 24);
+                            hand_2 = Random.Range(1, Card.Length + 1);
 
                             while (true)
                             {
                                 if (hand_1 == hand_2 || hand_2 == haveCardSet)//２枚目の変更
                                 {
-                                    hand_2 = Random.Range(1, 24);
+                                    hand_2 = Random.Range(1, Card.Length + 1);
 
                                 }
                                 else
@@ -314,13 +315,13 @@ public class CardManager : MonoBehaviour
                         if (usedCard3 == false)
                         {
                             haveCardSet = players[0].handCard_id_3;
-                            hand_2 = Random.Range(1, 24);
+                            hand_2 = Random.Range(1, Card.Length + 1);
 
                             while (true)
                             {
-                                if (hand_1 == hand_2 || hand_2 == haveCardSet)//２枚目の変更
+                                if (hand_1 == hand_2 || hand_2 == haveCardSet)//3枚目の変更
                                 {
-                                    hand_2 = Random.Range(1, 24);
+                                    hand_2 = Random.Range(1, Card.Length + 1) ;
 
                                 }
                                 else
@@ -372,15 +373,15 @@ public class CardManager : MonoBehaviour
     public void SetHand()   //ラウンド開始時の手札交換
     {
         
-        hand_1 = Random.Range(1, 24);//1枚目
-        hand_2 = Random.Range(1, 24);//２枚目
-        hand_3 = Random.Range(1, 24);//3枚目
+        hand_1 = Random.Range(1, Card.Length + 1);//1枚目
+        hand_2 = Random.Range(1, Card.Length + 1    );//２枚目
+        hand_3 = Random.Range(1, Card.Length + 1);//3枚目
 
         while (true)
         {           
             if(hand_1 == hand_2)//２枚目の変更
             {
-                hand_2 = Random.Range(1, 24);
+                hand_2 = Random.Range(1, Card.Length +1);
                 
             }
             else
@@ -393,7 +394,7 @@ public class CardManager : MonoBehaviour
         {
             if(hand_1 == hand_3 || hand_2 == hand_3)//3枚目の変更
             {
-                hand_3 = Random.Range(1, 24);
+                hand_3 = Random.Range(1, Card.Length + 1);
             }
             else
             {
