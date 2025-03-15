@@ -1,41 +1,17 @@
-using System.Collections;
+Ôªøusing System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Dice : MonoBehaviour
+namespace Assets.Script
 {
-    public int Dice1Max;
-    public int Dice2Max;
-    public int Dice1Min;
-    public int Dice2Min;
-    // Start is called before the first frame update
-    void Start()
+    internal class DIce
     {
-        
+        public int Dice1Max;
+        public int Dice2Max;
+        public int Dice1Min;
+        public int Dice2Min;
+        public DIce() { }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void DiceRoll(GameObject player)
-    {
-        int dice1,dice2,roll;
-        dice1 = Random.Range(Dice1Min, Dice1Max);
-        dice2 = Random.Range(Dice2Min, Dice2Max);
-        roll = dice1 + dice2;
-
-        Debug.Log($"É_ÉCÉXÇP{dice1},É_ÉCÉXÇQ{dice2},çáåv:{roll}");
-
-
-
-        GameObject.Find($"Player").GetComponent<Player>().MovePlayer(roll);
-        
-
-
-    }
-
-
 }

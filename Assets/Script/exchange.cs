@@ -8,7 +8,7 @@ public class exchange : MonoBehaviour
     private int ReqNumberHigh = 1;//必要数(高ティア→低ティア)
     private int ReqNumberLow = 3;//必要数(低ティア→高ティア)
 
-    public int ItemTire;
+    public int ItemManagerTire;
     
 
     // Start is called before the first frame update
@@ -21,16 +21,15 @@ public class exchange : MonoBehaviour
     void Update()
     {
         bool isuse = false;
-        Player player = GameObject.Find("Player").GetComponent<Player>();
-
-            if (ItemTire > 0)
+        PlayerManager PlayerManager = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+            if (ItemManagerTire > 0)
             {
-                if (ReqNumberLow <= player.items[ItemTire - 1].Count)
+                if (ReqNumberLow <= PlayerManager.ItemManagers[ItemManagerTire - 1].Count)
                 {
                     isuse = true;
                    
                 } 
-                else if (ReqNumberLow > player.items[ItemTire - 1].Count)
+                else if (ReqNumberLow > PlayerManager.ItemManagers[ItemManagerTire - 1].Count)
                 {
 
                     isuse = false;
@@ -45,16 +44,16 @@ public class exchange : MonoBehaviour
               return;
             }
 
-        if (ItemTire < 3)
+        if (ItemManagerTire < 3)
             {
-               if (ReqNumberHigh <= player.items[ItemTire + 1].Count)
+               if (ReqNumberHigh <= PlayerManager.ItemManagers[ItemManagerTire + 1].Count)
                {
                 isuse = true;
                
               
 
                }
-               else if (ReqNumberHigh > player.items[ItemTire + 1].Count)
+               else if (ReqNumberHigh > PlayerManager.ItemManagers[ItemManagerTire + 1].Count)
                {
 
                 isuse = false;

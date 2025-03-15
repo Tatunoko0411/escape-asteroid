@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ExchangeManager : MonoBehaviour
 {
@@ -12,7 +9,7 @@ public class ExchangeManager : MonoBehaviour
     [SerializeField] public  GameObject CheckBoxPrefab;
     [SerializeField] public　 GameObject parentGameObject;
 
-    [SerializeField] public GameObject ExchangeItem;//交換後のアイテム
+    [SerializeField] public GameObject ExchangeItemManager;//交換後のアイテム
 
     [SerializeField] public List<GameObject> Tire0Button;
     [SerializeField] public List<GameObject> Tire1Button;
@@ -41,26 +38,26 @@ public class ExchangeManager : MonoBehaviour
 
     public void SetCheckBox(GameObject gameObject)
     {
-        ExchangeItem = gameObject;
-        Player player = GameObject.Find("Player").GetComponent<Player>();
-        GameObject[] Items = GameObject.FindGameObjectsWithTag("CheckBox");
-        if (Items.Length > 0)
+        ExchangeItemManager = gameObject;
+        PlayerManager PlayerManager = GameObject.FindWithTag("PlayerManager").GetComponent<PlayerManager>();
+        GameObject[] ItemManagers = GameObject.FindGameObjectsWithTag("CheckBox");
+        if (ItemManagers.Length > 0)
         {
-            foreach (GameObject r in Items)
+            foreach (GameObject r in ItemManagers)
             {
                 Destroy(r);
             }
         }
 
-        for (int i = 0; i < player.items.Count; i++)
+        for (int i = 0; i < PlayerManager.ItemManagers.Count; i++)
         {
-            if (player.items[i] != null)
+            if (PlayerManager.ItemManagers[i] != null)
             {
-                foreach (GameObject item in player.items[i])
+                foreach (GameObject ItemManager in PlayerManager.ItemManagers[i])
                 {
-                    Item item1 = item.GetComponent<Item>(); 
+                    ItemManager ItemManager1 = ItemManager.GetComponent<ItemManager>(); 
                     GameObject textObject = Instantiate(
-                                             ExchangeButton[item1.Tire][item1.ID],
+                                             ExchangeButton[ItemManager1.Tire][ItemManager1.ID],
                                              parentGameObject.transform.position,
                                              Quaternion.identity,
                                              parentGameObject.transform
@@ -72,14 +69,14 @@ public class ExchangeManager : MonoBehaviour
 
     public void AddCost(GameObject cost)//指定したアイテムをリストコストに指定する
     {
-        
+        ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
         switch (toggle.isOn)
         {
             case true:
-                Cost.Add(cost);
+                exchangeManager.Cost.Add(cost);
                 break;
             case false:
-                Cost.Remove(cost);
+                exchangeManager.Cost.Remove(cost);
                 break;
         }
        
@@ -92,28 +89,29 @@ public class ExchangeManager : MonoBehaviour
 
     public void Exchange()//交換
     {
-        Player player = GameObject.Find("Player").GetComponent<Player>();
+        PlayerManager PlayerManager = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
         for (int i = 0; i < Cost.Count; i++)
         {
-            for (int z = 0; z < player.items.Count; z++)
+            for (int z = 0; z < PlayerManager.ItemManagers.Count; z++)
             {
-                if (player.items[z] != null)
+                if (PlayerManager.ItemManagers[z] != null)
                 {
-                     for(int x = 0;x < player.items[z].Count; x++)
-                    {
-                        if (player.items[z][x] == Cost[i])
+                     for(int x = 0;x < PlayerManager.ItemManagers[z].Count; x++)
+                     {
+                        if (PlayerManager.ItemManagers[z][x] == Cost[i])
                         {
-                            player.items[z].Remove(Cost[i]);
-                            player.items[ExchangeItem.GetComponent<Item>().Tire].Add(ExchangeItem);
+                            PlayerManager.ItemManagers[z].Remove(Cost[i]);
+                           
                             return;
                         }
-                    }
+                     }
                 }
             }
 
         }
 
-       
+        PlayerManager.ItemManagers[ExchangeItemManager.GetComponent<ItemManager>().Tire].Add(ExchangeItemManager);
+
 
     }
 }

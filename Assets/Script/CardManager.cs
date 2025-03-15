@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
@@ -152,7 +152,7 @@ public class CardManager : MonoBehaviour
             },
        };
 
-    List<Player> players = new List<Player>();
+    List<PlayerManager> PlayerManagers = new List<PlayerManager>();
 
     private void Start()
     {
@@ -177,14 +177,14 @@ public class CardManager : MonoBehaviour
     public void CardAction(int CardNum)
     {
         int playCard  = 0;
-        if (players[0].hand > 0)    //カードの残数確認
+        if (PlayerManagers[0].hand > 0)    //カードの残数確認
         {
             if(CardNum == 1)    //各カードの使用判定
             {
                 if(usedCard1 == false)
                 {
                     //使用するカードのidを処理用の変数に代入
-                    playCard = players[0].handCard_id;
+                    playCard = PlayerManagers[0].handCard_id;
                     usedCard1 = true;//カードを使用した状態にする
                 }
                 else
@@ -196,7 +196,7 @@ public class CardManager : MonoBehaviour
             else if(CardNum ==2)
             {   if(usedCard2 ==false)
                 {
-                    playCard = players[0].handCard_id_2;
+                    playCard = PlayerManagers[0].handCard_id_2;
                     usedCard2 = true;
                 }
                 else
@@ -210,7 +210,7 @@ public class CardManager : MonoBehaviour
             {
                 if (usedCard3 == false)
                 {
-                    playCard = players[0].handCard_id_3;
+                    playCard = PlayerManagers[0].handCard_id_3;
                     usedCard3 = true;
                 }
                 else
@@ -299,7 +299,7 @@ public class CardManager : MonoBehaviour
                     break;
             }
 
-            players[0].hand -= 1;
+            PlayerManagers[0].hand -= 1;
            
         }
         else
@@ -307,7 +307,7 @@ public class CardManager : MonoBehaviour
             Debug.Log("手札がありません");
         }
 
-        Debug.Log($"残り手札{players[0].hand}");
+        Debug.Log($"残り手札{PlayerManagers[0].hand}");
 
     }
 
@@ -350,13 +350,13 @@ public class CardManager : MonoBehaviour
         }
 
         //変更した値を手札に代入
-        players[0].handCard_id = hand_1;
-        players[0].handCard_id_2 = hand_2;
-        players[0].handCard_id_3 = hand_3;
+        PlayerManagers[0].handCard_id = hand_1;
+        PlayerManagers[0].handCard_id_2 = hand_2;
+        PlayerManagers[0].handCard_id_3 = hand_3;
 
-        Debug.Log($"手札 1枚目{players[0].handCard_id}２枚目{players[0].handCard_id_2}３枚目{players[0].handCard_id_3}");
+        Debug.Log($"手札 1枚目{PlayerManagers[0].handCard_id}２枚目{PlayerManagers[0].handCard_id_2}３枚目{PlayerManagers[0].handCard_id_3}");
 
-        players[0].hand = 3;//手札の枚数カウントリセット
+        PlayerManagers[0].hand = 3;//手札の枚数カウントリセット
 
         //各手札を使用可能の状態にする
         usedCard1 = false;

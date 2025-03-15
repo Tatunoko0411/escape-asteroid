@@ -1,10 +1,24 @@
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Item : MonoBehaviour
+namespace Assembly_CSharp
 {
-    // Start is called before the first frame update
-    public int Tire;
-    public int ID;
+    public class Item
+    {
+        public int Tire;
+        public int ID;
+
+        public Item()
+        {
+
+        }
+        public Item(int tire,int id)
+        {
+            Tire = tire;
+            ID = id;
+        }
+    }
 }
