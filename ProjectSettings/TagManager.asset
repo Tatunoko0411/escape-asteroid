@@ -10,6 +10,9 @@ TagManager:
   - Level2
   - Level3
   - Item
+  - CheckBox
+  - Exchange
+  - Body
   layers:
   - Default
   - TransparentFX

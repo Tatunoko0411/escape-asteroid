@@ -112,7 +112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.69999695, y: -81.6}
+  m_AnchoredPosition: {x: -0.7000122, y: -81.6}
   m_SizeDelta: {x: -28, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4185349909224705736
@@ -243,6 +243,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4470580790018060357}
   - component: {fileID: 5614042361512774365}
+  - component: {fileID: -390285597040935565}
   m_Layer: 5
   m_Name: steelCheckBox
   m_TagString: CheckBox
@@ -267,10 +268,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 80}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -964, y: 542}
+  m_SizeDelta: {x: 110, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5614042361512774365
 MonoBehaviour:
@@ -319,40 +320,30 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
-        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
-        m_MethodName: GetToggle
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 7399485122771857689}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
-        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
-        m_MethodName: AddCost
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 819033942728987344, guid: d340c4d3c608c1b458a0b3fa98eb0a7c, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: -390285597040935565}
+        m_TargetAssemblyTypeName: CheckBox, Assembly-CSharp
+        m_MethodName: Add
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &-390285597040935565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7399485122771857689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 828883447471336448481eddb8d45afd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemTire: 1
+  item: {fileID: 819033942728987344, guid: d340c4d3c608c1b458a0b3fa98eb0a7c, type: 3}

@@ -1,3 +1,4 @@
+using Assets.Script;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class PlayerManager : MonoBehaviour
     public int Move = 0;
     public List<int> probability = new List<int>()
     {0,0,0,0};
+    [SerializeField]public List<Texture> textures;
+    [SerializeField]public SkinnedMeshRenderer skinnedMeshRenderer;
     public int direction = 1;
     private int waitTime = 0;
     private Vector3 TargetPos;
@@ -18,7 +21,10 @@ public class PlayerManager : MonoBehaviour
     public bool isGetItemManager = false;
     public bool isStart = false;
    public bool isGoal = false;
+    public bool isGoalSend = false;
+    public bool Clear = false;
     public bool isSetExchange = false;
+    public bool isDiceRoll = false;
     public int id  = 99;
 
     public int hand;
@@ -28,15 +34,23 @@ public class PlayerManager : MonoBehaviour
     public int handCard_id_2;
 
     public int handCard_id_3;
+
     [SerializeField] public  List<List<GameObject>> ItemManagers =new List<List<GameObject>>()
    {
        new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
    };
 
+    [SerializeField] public GameObject Dice;
+
     public int oxygen = 100;
     // Start is called before the first frame update
     void Start()
     {
+        if (transform.name == "MainPlayer")
+        {
+            id = Client.MainPlayerID;
+            GetComponent<Client>().SetAnothreID(id);
+        }
     }
 
     // Update is called once per frame
@@ -55,63 +69,68 @@ public class PlayerManager : MonoBehaviour
                     isSetDice = true;
                 }
 
-                //プレイヤーの移動
-                if (Move > 0)
+                if (isDiceRoll)
                 {
-                    if (waitTime <= 0)
+                    //プレイヤーの移動
+                    if (Move > 0)
                     {
-
-                        if ((gameManager.trouts.Count <= trout + direction) ||
-                            (0 > trout + direction))
+                        if (waitTime <= 0)
                         {
-                            Move = 0;
-                            ChangeDirection();
-                            //素材取得ターンに入る
-                            if (transform.name == "MainPlayer")
+
+                            if ((gameManager.trouts.Count <= trout + direction) ||
+                                (0 > trout + direction))
                             {
-                                ChoiceGetItemManager();
-                            }
-                            return;
-                        }
-                        else
-                        {
-                            TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
-                            TargetPos.y = 0.3f;
-                        }
-
-                        transform.position = Vector3.MoveTowards
-                              (transform.position,
-                              TargetPos,
-                              0.01f + Time.deltaTime
-                              );
-
-
-                        if (transform.position == TargetPos)
-                        {
-                            Move--;
-                            trout += direction;
-                            waitTime = 30;
-                            if (Move == 0)
-                            {
+                                Move = 0;
+                                ChangeDirection();
+                                //素材取得ターンに入る
                                 if (transform.name == "MainPlayer")
                                 {
                                     ChoiceGetItemManager();
                                 }
+                                return;
+                            }
+                            else
+                            {
+                                TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
+                                TargetPos.y = 0.3f;
+                            }
+
+                            transform.position = Vector3.MoveTowards
+                                  (transform.position,
+                                  TargetPos,
+                                  0.01f + Time.deltaTime
+                                  );
+
+
+                            if (transform.position == TargetPos)
+                            {
+                                Move--;
+                                trout += direction;
+                                waitTime = 30;
+                                if (Move == 0)
+                                {
+                                    if (transform.name == "MainPlayer")
+                                    {
+                                        ChoiceGetItemManager();
+                                    }
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        waitTime--;
-                    }
+                        else
+                        {
+                            waitTime--;
+                        }
 
+                    }
                 }
             }
-            else
+            else if(!isGoalSend)
             {
-                GetComponent<Client>().SendComment((int)Event.Event_ID.Turn_End);
+                GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
+                isGoalSend = true;
             }
         }
+       
 
 
     }
@@ -123,11 +142,17 @@ public class PlayerManager : MonoBehaviour
        // direction = -direction;
        gameManager.BackButton.GetComponent<Button>().interactable = false;
     }
-    public void MovePlayerManager(int roll)
+    public void MovePlayerManager(int roll,int dice1,int dice2)
     {
+        Dice dice = Dice.GetComponent<Dice>();
         Move = roll;
         isDiceRollUI = false;
+        dice.DiceAnimation(dice1,dice2,roll);
+    }
 
+    public void BackPlayer(int roll)
+    {
+        Move = -roll;
     }
 
     public void ChoiceGetItemManager()
@@ -140,22 +165,22 @@ public class PlayerManager : MonoBehaviour
 
     public void SetHaveItemManager()
     {//
-        GameObject[] ItemManagers = GameObject.FindGameObjectsWithTag("ItemManager");
+        GameObject[] ActivItemManagers = GameObject.FindGameObjectsWithTag("Item");
         GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        foreach (GameObject r in ItemManagers)
+        foreach (GameObject r in ActivItemManagers)
         {
             Destroy(r);
         }
 
-        for (int i = 0; i < ItemManagers.Length; i++)
+        for (int i = 0; i < ItemManagers.Count; i++)
         {
             if (ItemManagers[i] != null)
             {
-                foreach (GameObject ItemManager in ItemManagers)
+                foreach (GameObject Item in ItemManagers[i])
                 {
                     GameObject textObject = Instantiate(
-                                             ItemManager,
+                                             Item,
                                              gameManager.transform.position,
                                              Quaternion.identity,
                                              gameManager.parentGameObject.transform
@@ -174,14 +199,32 @@ public class PlayerManager : MonoBehaviour
 
     public void reduceOxygen()
     {
+        CardManager cardManager = GetComponent<CardManager>();
         int ItemCount = 0;
         for(int i = 0;i<ItemManagers.Count;i++)
         {
             ItemCount += ItemManagers[i].Count;
         }
+
+        if (cardManager.breathHold == true)
+        {
+            ItemCount = 0;
+            cardManager.breathHold = false;
+        }
         oxygen -= ItemCount;
         GetComponent<Client>().SendComment((int)Event.Event_ID.Oxygen);
-        Debug.Log($"残り{oxygen}");
+
+    }
+
+    public void DiceRoll()
+    {
+        int ItemCount = 0;
+        for (int i = 0; i < ItemManagers.Count; i++)
+        {
+            ItemCount += ItemManagers[i].Count;
+        }
+        oxygen -= ItemCount;
+        GetComponent<Client>().SendComment((int)Event.Event_ID.Dice);
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -203,10 +246,10 @@ public class PlayerManager : MonoBehaviour
 
         if (other.gameObject.tag == "Level0")
         {
-            probability[0] = 70;
-            probability[1] = 30;
+            probability[0] = 0;
+            probability[1] = 20;
             probability[2] = 0;
-            probability[3] = 0;
+            probability[3] = 80;
         }
 
         if (other.gameObject.tag == "Level1")
@@ -229,8 +272,8 @@ public class PlayerManager : MonoBehaviour
         {
             probability[0] = 0;
             probability[1] = 0;
-            probability[2] = 30;
-            probability[3] = 70;
+            probability[2] = 20;
+            probability[3] = 80;
         }
     }
 }

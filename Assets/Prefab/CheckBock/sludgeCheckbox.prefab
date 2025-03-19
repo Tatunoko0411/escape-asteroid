@@ -167,6 +167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4600295142379781807}
   - component: {fileID: 3388195309850798725}
+  - component: {fileID: -6784312628160086806}
   m_Layer: 5
   m_Name: sludgeCheckbox
   m_TagString: CheckBox
@@ -193,7 +194,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 67.9, y: -1}
   m_SizeDelta: {x: 160, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3388195309850798725
@@ -243,31 +244,33 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
-        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
-        m_MethodName: GetToggle
-        m_Mode: 2
+      - m_Target: {fileID: -6784312628160086806}
+        m_TargetAssemblyTypeName: CheckBox, Assembly-CSharp
+        m_MethodName: Add
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 8024963610491101038}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8658914219332686170, guid: 2dd24fd89d1203e4fad97e11376905c9, type: 3}
-        m_TargetAssemblyTypeName: ExchangeManager, Assembly-CSharp
-        m_MethodName: AddCost
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 1748931249382644094, guid: 3f092ba8b0af4bb45996d37f6546fa7a, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!114 &-6784312628160086806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8024963610491101038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 828883447471336448481eddb8d45afd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemTire: 0
+  item: {fileID: 1748931249382644094, guid: 3f092ba8b0af4bb45996d37f6546fa7a, type: 3}
 --- !u!1 &8258203707072359238
 GameObject:
   m_ObjectHideFlags: 0

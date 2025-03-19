@@ -18,5 +18,8 @@ public class Event : MonoBehaviour
         Goal,
         Round_End,
         Turn_End = 99,
+        Quit_Player,
+        Set_Target,
+        Conect,
     }
 }

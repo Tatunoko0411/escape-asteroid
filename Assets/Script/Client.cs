@@ -12,6 +12,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using Assets.Script;
 using Assembly_CSharp;
+using static Event;
+using Unity.VisualScripting;
 
 public class Client : MonoBehaviour
 {
@@ -24,6 +26,10 @@ public class Client : MonoBehaviour
     bool isConnected = false; // サーバーとの接続処理が一通り終わったらtrueにする
     public int lookAtID;//情報を見たい人のID
     bool waitSend= false;
+    static bool first = false;
+    static public int MainPlayerID;
+    public int CardId;
+    PlayerManager player;
     // 接続先のサーバー情報を設定
 #if DEBUG
     public string host = "127.0.0.1";
@@ -38,6 +44,7 @@ public class Client : MonoBehaviour
     /// </summary>
     void Start()
     {
+        player = GetComponent<PlayerManager>();
         // ワーカースレッドからメインスレッドに処理を渡す準備
         context = SynchronizationContext.Current;
 
@@ -68,22 +75,31 @@ public class Client : MonoBehaviour
         NetworkStream stream = tcpClient.GetStream();
         int length = await stream.ReadAsync(sendBuffer, 0, sendBuffer.Length);
         string receiveString = Encoding.UTF8.GetString(sendBuffer, 0, length);
-
-        Debug.Log(receiveString);
-
-        // システムメッセージとして表示
-        PlayerManager playerManager = GetComponent<PlayerManager>();
-        playerManager.id = int.Parse(receiveString);
-
-
-        SetAnothreID(playerManager.id);
         
-
+        Debug.Log(receiveString);
         // 受信用の処理をワーカースレッドで起動
         Thread thread = new Thread(new ThreadStart(ReceiveProcess));
         thread.Start();
+        isConnected = true;
+        if (!first)
+        {
+            // システムメッセージとして表示
+           
+            MainPlayerID = int.Parse(receiveString);
+            first = true;
+            GameObject.Find("ConectManager").GetComponent<ConectManager>().SetConectedPlayer(MainPlayerID);
+            SendComment((int)Event.Event_ID.Conect);
+        }
+        else
+        {
+            player.skinnedMeshRenderer.material.SetTexture("_MainTex", player.textures[player.id]);
+            player.id = MainPlayerID;
+            SetAnothreID(player.id);
+        }
 
-        isConnected = true; // 接続処理が一通り完了したらtrueに更新
+
+
+       // 接続処理が一通り完了したらtrueに更新
     }
 
     /// <summary>
@@ -110,17 +126,43 @@ public class Client : MonoBehaviour
             byte[] buffer = new byte[1024];
             // 受信したデータからイベントIDを取り出す
             int eventID = receiveBuffer[0];
-            byte[] bufferString ; // 1バイト目をスキップ
+           // byte[] bufferString = new byte[1024]; // 1バイト目をスキップ
             string receiveString ;
 
 
             switch (eventID)
             {
+                case (int)Event.Event_ID.Conect:
+                    int conectId = receiveBuffer[1];
+                    buffer = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 2);
+                    Debug.Log($"受信文字列: {receiveString}");
+                    context.Post(_ =>
+                    {
+                        ConectManager conectManager =  GameObject.Find("ConectManager").GetComponent<ConectManager>();
+                    switch(conectId)
+                    {
+                        case 0:
+                            conectManager.PlayerActive1 = true;
+                            break;
+                        case 1:
+                            conectManager.PlayerActive2 = true;
+                            break;
+                        case 2:
+                            conectManager.PlayerActive3 = true;
+                            break;
+                        case 3:
+                            conectManager.PlayerActive4 = true;
+                            break;
+                    }
+                    }, null);
+                    break;
                 case (int)Event.Event_ID.Dice:
                     int MovePlayerManagerId = receiveBuffer[1];
+                    int ox = receiveBuffer[2];
                     // 受信したデータを文字列に変換
-                    bufferString = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 2);
+                    buffer = receiveBuffer.Skip(3).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 3);
                     Debug.Log($"受信文字列: {receiveString}");
 
                     Roll roll = JsonConvert.DeserializeObject<Roll>(receiveString);
@@ -136,16 +178,36 @@ public class Client : MonoBehaviour
                             PlayerManager PlayerManagerScript = PlayerManager.GetComponent<PlayerManager>();
                             if (PlayerManagerScript.id == MovePlayerManagerId)
                             {
-                                PlayerManagerScript.MovePlayerManager(roll.rollNum);
+                                PlayerManagerScript.MovePlayerManager(roll.rollNum,roll.dice1,roll.dice2);
                             }
                         }
+                        player.oxygen = ox;
+                        Debug.Log($"残り{player.oxygen}");
+                    }, null);
+                    break;
+                case (int)Event.Event_ID.Card:
+                    int usePlayerId = receiveBuffer[1];
+                    int ActiveCardId = receiveBuffer[2];
+                    context.Post(_ =>
+                    {
+                        GameObject[] PlayerManagers = GameObject.FindGameObjectsWithTag("Player");
+                        CardManager cardManager = GameObject.Find("CardManager").GetComponent<CardManager>();
+                        foreach (GameObject PlayerManager in PlayerManagers)
+                        {
+                            PlayerManager PlayerManagerScript = PlayerManager.GetComponent<PlayerManager>();
+                            if (PlayerManagerScript.id != usePlayerId)
+                            {
+                                cardManager.CardAction(usePlayerId,PlayerManagerScript.id);
+                            }
+                        }
+                        Debug.Log($"カードID{usePlayerId}のカードが使われました");
                     }, null);
                     break;
                 case (int)Event.Event_ID.Change_Direction:
                     int ChangePlayrrId = receiveBuffer[1];
                     // 受信したデータを文字列に変換
-                    bufferString = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 2);
+                    buffer = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 2);
                     Debug.Log($"受信文字列: {receiveString}");
 
                     //  PlayerManager1.GetComponent<PlayerManager>().MovePlayerManager(roll);
@@ -165,8 +227,8 @@ public class Client : MonoBehaviour
                     break;
                 case (int)Event.Event_ID.Turn_End:
                     // 受信したデータを文字列に変換
-                    bufferString = receiveBuffer.Skip(1).ToArray(); // 1バイト目をスキップ
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 1);
+                    buffer = receiveBuffer.Skip(1).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 1);
                     Debug.Log($"受信文字列: {receiveString}");
 
                     context.Post(_ =>
@@ -175,14 +237,14 @@ public class Client : MonoBehaviour
                         Debug.Log($"{receiveString}番目の人のターン");
                         gameManager.GetComponent<GameManager>().turn = int.Parse(receiveString);
                         GetComponent<PlayerManager>().isSetDice = false;
-
+                        GetComponent<PlayerManager>().isDiceRoll = false;
                     }, null);
                     break;
                 case (int)Event.Event_ID.Look:
                     int lookPlayerId = receiveBuffer[1];
                     // 受信したデータを文字列に変換
-                    bufferString = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 2);
+                    buffer = receiveBuffer.Skip(2).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 2);
                     Debug.Log($"受信文字列: {receiveString}");
                     context.Post(_ =>
                     {
@@ -196,8 +258,8 @@ public class Client : MonoBehaviour
                     }, null);
                     break;
                 case (int)Event.Event_ID.Send:
-                    bufferString = receiveBuffer.Skip(1).ToArray();
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 1);
+                    buffer = receiveBuffer.Skip(1).ToArray();
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 1);
                     
                     if (waitSend)
                     {
@@ -210,12 +272,13 @@ public class Client : MonoBehaviour
                     break;
                     case (int)Event.Event_ID.Oxygen:
                     // 受信したデータを文字列に変換
-                    bufferString = receiveBuffer.Skip(1).ToArray(); // 1バイト目をスキップ
-                    receiveString = Encoding.UTF8.GetString(bufferString, 0, length - 1);
+                    buffer = receiveBuffer.Skip(1).ToArray(); // 1バイト目をスキップ
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 1);
                     context.Post(_ =>
                     {
                         PlayerManager playerManager = GetComponent<PlayerManager>();
                         playerManager.oxygen = int.Parse(receiveString);
+                        Debug.Log($"残り{playerManager.oxygen}");
                     }, null);
                     break;
                     case (int)Event.Event_ID.Round_End:
@@ -226,17 +289,35 @@ public class Client : MonoBehaviour
                         GetComponent<PlayerManager>().isSetExchange = true;
                     }, null);
                     break;
+                    case(int)Event.Event_ID.Quit_Player:
+                    int quitPlayerID = receiveBuffer[1];
+                    context.Post(_ =>
+                    {
+                       ConectManager conectManager =   GameObject.Find("ConectManager").GetComponent<ConectManager>();
+                        switch(quitPlayerID)
+                        {
+                            case 0:
+                                conectManager.PlayerActive1 = false;
+                                break;
+                            case 1:
+                                conectManager.PlayerActive2 = false;
+                                break;
+                            case 2:
+                                conectManager.PlayerActive3 = false;
+                                break;
+                            case 3:
+                                conectManager.PlayerActive4 = false;
+                                break;
+
+                        }
+                    }, null);
+                    break;
             }
             // Unityで用意しているメソッドは、ワーカースレッド内で起動不可なものもある。
             // Instantiateはメインスレッドでないと実行不可。
             // contextを介して、ワーカースレッドからメインスレッドに処理を依頼する。
             // TODO: 何故かコメントがおかしい動きをする。。要修正
-            context.Post(_ =>
-            {
-                // UI上にコメント用のオブジェクトを生成後、テキストの内容を書き換え
-               // GameObject comment = Instantiate(commentPrefab, parentObject.transform.position, Quaternion.identity, parentObject.transform);
-                // comment.GetComponent<Text>().text = receiveString;
-            }, null);
+
         }
     }
 
@@ -259,13 +340,18 @@ public class Client : MonoBehaviour
         byte[] sendBuffer = new byte[1024];
         switch (event_ID)
         {
+            case (int)Event.Event_ID.Conect:
+
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
+                sendBuffer = sendBuffer.Prepend((byte)MainPlayerID).ToArray();
+                break;
             case (int)Event.Event_ID.Dice:
                 DIce dIce = new DIce();
                 if (/*ここにダイス変化の条件を入れる*/false)
                 {
 
-                    dIce.Dice1Max = 6;
-                    dIce.Dice1Min = 4;
+                    dIce.Dice1Max = 3;
+                    dIce.Dice1Min = 1;
                     dIce.Dice2Max = 6;
                     dIce.Dice2Min = 4;
                 }
@@ -280,6 +366,11 @@ public class Client : MonoBehaviour
 
                 sendString = JsonConvert.SerializeObject(dIce);
                 sendBuffer = Encoding.UTF8.GetBytes(sendString);
+                sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().oxygen).ToArray();
+                sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().id).ToArray();
+                break;
+            case (int)Event.Event_ID.Card:
+                sendBuffer = sendBuffer.Prepend((byte)CardId).ToArray();
                 sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().id).ToArray();
                 break;
             case (int)Event.Event_ID.Change_Direction:
@@ -318,6 +409,9 @@ public class Client : MonoBehaviour
                 break;
             case (int)Event.Event_ID.Goal:
                 break;
+            default:
+
+                break;
         }
        
 
@@ -325,8 +419,10 @@ public class Client : MonoBehaviour
        
         // 送信用データの先頭にイベントIDを付与
         sendBuffer = sendBuffer.Prepend((byte)event_ID).ToArray();
+
         NetworkStream stream = tcpClient.GetStream();
         await stream.WriteAsync(sendBuffer, 0, sendBuffer.Length);
+        Debug.Log("");
     }
 
     public void SetAnothreID(int mainId)
@@ -345,7 +441,8 @@ public class Client : MonoBehaviour
             if (anothtePlayer.id > playerManagers.Length)
             {
                     anothtePlayer.id = id;
-                    id++;
+                anothtePlayer.skinnedMeshRenderer.material.SetTexture("_MainTex", anothtePlayer.textures[anothtePlayer.id]);
+                id++;
             }
      
             
@@ -369,6 +466,7 @@ public class Client : MonoBehaviour
         string sendString = "__end";
         byte[] sendBuffer = new byte[1024];
         sendBuffer = Encoding.UTF8.GetBytes(sendString);
+        sendBuffer = sendBuffer.Prepend((byte)MainPlayerID).ToArray();
         NetworkStream stream = tcpClient.GetStream();
         await stream.WriteAsync(sendBuffer, 0, sendBuffer.Length);
 

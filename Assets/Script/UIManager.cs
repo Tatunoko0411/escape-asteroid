@@ -6,7 +6,10 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] PlayerManager PlayerManager;
     [SerializeField] GameManager gameManager;
+    [SerializeField] ExchangeManager exchangeManager;
+
     [SerializeField] List<GameObject> IsExchangeUI;
+    [SerializeField] List<GameObject> IsSelectUI;
     [SerializeField] List<GameObject> IsPlayingUI;
     [SerializeField] List<GameObject> IsDiceRollUI;
     [SerializeField] List<GameObject> IsGetItemManagerUI;

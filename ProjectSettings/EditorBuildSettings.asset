@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/ConectScene.unity
+    guid: 3ef2f3e2babc79d4aad0f74b4dbc191a
+  - enabled: 1
     path: Assets/Scenes/TatunokoScene.unity
     guid: d82d08dbb2804894e9a8a7991f555116
   m_configObjects: {}

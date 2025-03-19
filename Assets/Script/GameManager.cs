@@ -1,3 +1,4 @@
+using Assets.Script;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public  List<GameObject> Tire2List;
     [SerializeField] public  List<GameObject> Tire3List;
 
+    [SerializeField] public List<GameObject> TarGetItems;
+    public int target;
 
     public List<List<GameObject>> ItemManagerList = new List<List<GameObject>>();
 
@@ -22,15 +25,35 @@ public class GameManager : MonoBehaviour
     public int activePlayerManager = 0;
     public int turn = 0;   //どのプレイヤーのターンかを判別
     public bool isDiceRoll=false;
- 
-    // Start is called before the first frame update
+
+    [SerializeField] public GameObject cardManagerObj;
+    CardManager cardManager;
+
     void Start()
     {
         ItemManagerList.Add(Tire0List);
         ItemManagerList.Add(Tire1List);
         ItemManagerList.Add(Tire2List);
         ItemManagerList.Add(Tire3List);
-        
+        cardManager = cardManagerObj.GetComponent<CardManager>();
+
+        List<string> possibleItems = new List<string> { "booster", "cockpit", "parachute", "toilet", "controller" };
+
+        // ランダムに3つの異なるアイテムを選んでクリア条件を設定
+        List<string> targetItems = new List<string>();
+
+        // possibleItems からランダムに3つの異なるアイテムを選択
+        while (targetItems.Count < 1)
+        {
+            string item = possibleItems[UnityEngine.Random.Range(0, possibleItems.Count)]; // UnityEngine.Randomを使う
+            if (!targetItems.Contains(item))  // すでに選ばれていないか確認
+            {
+                targetItems.Add(item); // まだ選ばれていなければ追加
+            }
+        }
+
+        // デバッグ用にランダムに選ばれたクリアアイテムを表示
+        Debug.Log("選ばれたクリア判定アイテム: " + string.Join(", ", targetItems));
     } 
 
     // Update is called once per frame
@@ -48,12 +71,12 @@ public class GameManager : MonoBehaviour
         if (Get)
         {
             float result;
-            int Tire =0;
+            int Tire = 0;
             int kinds = 0;
-         
 
-               
-                
+
+
+
             if (turn == PlayerManager.id)
             {
 
@@ -80,7 +103,7 @@ public class GameManager : MonoBehaviour
                     Tire = 3;
                     kinds = Random.Range(0, 3);
                 }
-                ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
+               // ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
                 PlayerManager.ItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
                 Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
                 GameObject textObject = Instantiate(
@@ -89,14 +112,41 @@ public class GameManager : MonoBehaviour
                                          Quaternion.identity,
                                          parentGameObject.transform
                                          );
+
+                //幸運のお守り発動中
+                if (cardManager.luckyCharm == true)
+                {
+                    int randMin = 0, randMax = 50,randAns;
+                    randAns = Random.Range(randMin, randMax);
+
+
+                    //30%の確率で複製
+                    if (randAns <= 15)
+                    {
+
+
+                        PlayerManager.ItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
+                        Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
+                        textObject = Instantiate(
+                                                ItemManagerList[Tire][kinds],
+                                                parentGameObject.transform.position,
+                                                Quaternion.identity,
+                                                parentGameObject.transform
+                                                );
+                    }
+
+                }
+
             }
+
+
+
+
         }
-        
+
 
         PlayerManager.isGetItemManager = false;
-
         //次の人のターンに
         PlayerManagers.GetComponent<Client>().SendComment((int)Event.Event_ID.Turn_End);
-        
     }
 }
