@@ -99,6 +99,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetCosts:
   - {fileID: 1965581278709192921, guid: 0d96c3f348dd4b14c97aa7a237d63431, type: 3}
-  - {fileID: 1965581278709192921, guid: 0d96c3f348dd4b14c97aa7a237d63431, type: 3}
+  - {fileID: 6764524972910182285, guid: 8a0ba1fa69e3d5b4482dec0a6f084b0b, type: 3}
   - {fileID: 7086629225821744304, guid: 7df3264b5c9ae81418113378eda8256c, type: 3}
   allCosts: 000000

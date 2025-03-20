@@ -65,8 +65,8 @@ public class ExchangeManager : MonoBehaviour
         Cost  = new List<GameObject>();
         CostColorTextHigh.color =Color.black;
         CostColorTextLow.color =Color.black;
-        CostColorTextHigh.text = $"Å~{Cost.Count}/{ReqNumberLow}";
-        CostColorTextLow.text = $"Å~{Cost.Count}/{ReqNumberHigh}";
+        CostColorTextHigh.text = $"Å~{Cost.Count}/{ReqNumberHigh}";
+        CostColorTextLow.text = $"Å~{Cost.Count}/{ReqNumberLow}";
         switch (gameObject.GetComponent<ItemManager>().Tire)
         {
             case 0:
@@ -177,6 +177,11 @@ public class ExchangeManager : MonoBehaviour
                 CostColorTextHigh.color = Color.green;
                 GameObject.FindWithTag("Exchange").GetComponent<Button>().interactable = true;
             }
+            else
+            {
+                CostColorTextHigh.color = Color.black;
+                GameObject.FindWithTag("Exchange").GetComponent<Button>().interactable = false;
+            }
         }
         else if (isLow)
         {
@@ -185,6 +190,11 @@ public class ExchangeManager : MonoBehaviour
             {
                 CostColorTextLow.color = Color.green;
                 GameObject.FindWithTag("Exchange").GetComponent<Button>().interactable = true;
+            }
+            else
+            {
+                CostColorTextLow.color = Color.black;
+                GameObject.FindWithTag("Exchange").GetComponent<Button>().interactable = false;
             }
         }
     }
@@ -258,7 +268,7 @@ public class ExchangeManager : MonoBehaviour
                     {
                         if (playerhaveItemList[z][x] == target.targetCosts[i])
                         {
-                            playerhaveItemList[z].Remove(target.targetCosts[i]);
+                            //playerhaveItemList[z].Remove(target.targetCosts[i]);
                             target.allCosts[i] = true;
                             break;
                         }
@@ -267,23 +277,30 @@ public class ExchangeManager : MonoBehaviour
             }
 
         }
-
+        Client client = GameObject.Find("MainPlayer").GetComponent<Client>();
 
         for (int i = 0;i < target.allCosts.Count;i++)
         {
             if (!target.allCosts[i])
             {
+                client.SendComment((int)Event.Event_ID.Exchange_End);
                 return;
             }
         }
 
         player.Clear = true;
-
+       
         // ÉQÅ[ÉÄÉNÉäÉAèåèÇÃämîF
         if (player.Clear)
         {
             // ÉQÅ[ÉÄÉNÉäÉAÉtÉâÉOÇóßÇƒÇÈ
             Debug.Log("ÉQÅ[ÉÄÉNÉäÉA");
+            client.SendComment((int)Event.Event_ID.Clear);
+            
+        }
+        else
+        {
+            client.SendComment((int)Event.Event_ID.Exchange_End);
         }
     }
 

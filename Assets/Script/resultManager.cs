@@ -10,6 +10,10 @@ public class resultManager : MonoBehaviour
     [SerializeField] GameObject resultTextPrefab;
     [SerializeField] GameObject parentGameObject;
 
+    [SerializeField] List<GameObject> ClearUIList;
+    [SerializeField] List<GameObject> ClearOrDefeate;
+    [SerializeField] Client Client;
+
     //ˆÚsæ‚ÌƒV[ƒ“–¼
     private string fadeScene = "TitleScenes";
 
@@ -22,7 +26,27 @@ public class resultManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        for (int i = 0; i < Client.ClearList.Count; i++)
+        {
+            if(Client.ClearList[i] == true)
+            {
+               GameObject textObject = Instantiate(
+                                              ClearOrDefeate[0],
+                                              ClearUIList[i].transform.position,
+                                              Quaternion.identity,
+                                              ClearUIList[i].transform
+                                              );
+            }
+            else
+            {
+                GameObject textObject = Instantiate(
+                                             ClearOrDefeate[1],
+                                             ClearUIList[i].transform.position,
+                                             Quaternion.identity,
+                                             ClearUIList[i].transform
+                                             );
+            }
+        }
     }
 
     // Update is called once per frame

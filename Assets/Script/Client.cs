@@ -22,20 +22,21 @@ public class Client : MonoBehaviour
     [SerializeField] GameObject parentObject;
     Text answerText;
     SynchronizationContext context; // ワーカースレッドからメインスレッドに処理を渡すのに使用する
-    TcpClient tcpClient;
-    bool isConnected = false; // サーバーとの接続処理が一通り終わったらtrueにする
+    static TcpClient tcpClient;
+    static bool isConnected = false; // サーバーとの接続処理が一通り終わったらtrueにする
     public int lookAtID;//情報を見たい人のID
     bool waitSend= false;
     static bool first = false;
     static public int MainPlayerID;
     public int CardId;
-    PlayerManager player;
+    static public List<bool> ClearList = new List<bool>() { false,false,false,false};
+     PlayerManager player;
     // 接続先のサーバー情報を設定
 #if DEBUG
     public string host = "127.0.0.1";
     public int port = 20001;
 #else
-    public string host = "127.0.0.1";
+    public string host = "4.216.50.103";
     public int port = 20001;
 #endif
 
@@ -44,15 +45,30 @@ public class Client : MonoBehaviour
     /// </summary>
     void Start()
     {
-        player = GetComponent<PlayerManager>();
+      // player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+        if (!isConnected) 
+        {
         // ワーカースレッドからメインスレッドに処理を渡す準備
         context = SynchronizationContext.Current;
 
         // 回答入力フォームからデータを見られるようにする
-       //answerText = GameObject.Find("Comment").GetComponent<Text>();
+        //answerText = GameObject.Find("Comment").GetComponent<Text>();
 
-        // サーバーと接続
-        ConnectServer();
+    
+            // サーバーと接続
+            ConnectServer();
+        }
+        else
+        {
+            PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+            player.skinnedMeshRenderer.material.SetTexture("_MainTex", player.textures[player.id]);
+            player.id = MainPlayerID;
+            SetAnothreID(player.id);
+            if (MainPlayerID == 0)
+            {
+                SendComment((int)Event.Event_ID.Set_Target);
+            }
+        }
     }
 
     /// <summary>
@@ -62,7 +78,7 @@ public class Client : MonoBehaviour
     {
         // クライアント作成
         tcpClient = new TcpClient();
-
+        host = "4.216.50.103";
         // 送受信タイムアウト設定（msec）
         tcpClient.SendTimeout = 1000;
         tcpClient.ReceiveTimeout = 1000;
@@ -81,21 +97,14 @@ public class Client : MonoBehaviour
         Thread thread = new Thread(new ThreadStart(ReceiveProcess));
         thread.Start();
         isConnected = true;
-        if (!first)
-        {
+
             // システムメッセージとして表示
            
             MainPlayerID = int.Parse(receiveString);
             first = true;
             GameObject.Find("ConectManager").GetComponent<ConectManager>().SetConectedPlayer(MainPlayerID);
             SendComment((int)Event.Event_ID.Conect);
-        }
-        else
-        {
-            player.skinnedMeshRenderer.material.SetTexture("_MainTex", player.textures[player.id]);
-            player.id = MainPlayerID;
-            SetAnothreID(player.id);
-        }
+
 
 
 
@@ -108,7 +117,6 @@ public class Client : MonoBehaviour
     private async void ReceiveProcess()
     {
         NetworkStream stream = tcpClient.GetStream();
-
         while (true)
         {
             // ReadAsyncでサーバーからのメッセージを受信待機
@@ -181,25 +189,25 @@ public class Client : MonoBehaviour
                                 PlayerManagerScript.MovePlayerManager(roll.rollNum,roll.dice1,roll.dice2);
                             }
                         }
+                        PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
                         player.oxygen = ox;
                         Debug.Log($"残り{player.oxygen}");
                     }, null);
                     break;
                 case (int)Event.Event_ID.Card:
-                    int usePlayerId = receiveBuffer[1];
-                    int ActiveCardId = receiveBuffer[2];
+
+
+
                     context.Post(_ =>
                     {
+
+                        int usePlayerId = (int)receiveBuffer[1];
+                        int ActiveCardId = (int)receiveBuffer[2];
                         GameObject[] PlayerManagers = GameObject.FindGameObjectsWithTag("Player");
                         CardManager cardManager = GameObject.Find("CardManager").GetComponent<CardManager>();
-                        foreach (GameObject PlayerManager in PlayerManagers)
-                        {
-                            PlayerManager PlayerManagerScript = PlayerManager.GetComponent<PlayerManager>();
-                            if (PlayerManagerScript.id != usePlayerId)
-                            {
-                                cardManager.CardAction(usePlayerId,PlayerManagerScript.id);
-                            }
-                        }
+                       
+                                cardManager.CardAction(ActiveCardId,usePlayerId);
+                         
                         Debug.Log($"カードID{usePlayerId}のカードが使われました");
                     }, null);
                     break;
@@ -236,9 +244,13 @@ public class Client : MonoBehaviour
                         GameObject gameManager = GameObject.Find("GameManager");
                         Debug.Log($"{receiveString}番目の人のターン");
                         gameManager.GetComponent<GameManager>().turn = int.Parse(receiveString);
-                        GetComponent<PlayerManager>().isSetDice = false;
-                        GetComponent<PlayerManager>().isDiceRoll = false;
+                        // PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+                        PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+                        player.isSetDice = false;
+                        player.isDiceRoll = false;
+
                     }, null);
+
                     break;
                 case (int)Event.Event_ID.Look:
                     int lookPlayerId = receiveBuffer[1];
@@ -286,8 +298,87 @@ public class Client : MonoBehaviour
                     {
                         Debug.Log("ラウンドが終了しました");
                         //ココから交換に移る
-                        GetComponent<PlayerManager>().isSetExchange = true;
+                        PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+                         player.isSetExchange = true;
                     }, null);
+                    break;
+                case (int)Event.Event_ID.Next_Round:
+                    context.Post(_ =>
+                    {
+                        PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+                        player.isSetExchange = false;
+                        player.oxygen = 50;
+                        player.isGoal = false;
+                        player.isStart = true;
+                        player.isDiceRoll = false;
+                        player.isDiceRollUI = true;
+                        player.direction = 1;
+                        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+                        gameManager.turn = 0;
+                        gameManager.BackButton.GetComponent<Button>().interactable = true;
+                        CardManager cardManager = GameObject.Find("CardManager").GetComponent<CardManager>();
+                        cardManager.SetHand();
+                    }, null);
+                    break;
+                    case (int) Event.Event_ID.Game_End:
+                    context.Post(_ =>
+                    {
+                        Initiate.Fade("ResultScene", Color.black, 1.0f);
+                    }, null);
+                    break;
+                    case (int)Event.Event_ID.Clear:
+                    int ClearPlayerId = receiveBuffer[1];
+                    ClearList[ClearPlayerId] = true;
+                    buffer = receiveBuffer.Skip(2).ToArray();
+                    receiveString = Encoding.UTF8.GetString(buffer, 0, length - 2);
+                    int scondEventId = 0;
+                    bool AllClear= true;
+                    for (int i = 0;i<ClearList.Count;i++)
+                    {
+                        if(ClearList[i] != true)
+                        {
+                            AllClear = false;
+                            break;
+                        }
+                    }
+                    if(AllClear)
+                    {
+                        context.Post(_ =>
+                        {
+                            Initiate.Fade("ResultScene", Color.black, 1.0f);
+                        }, null);
+                    }
+                    bool result = int.TryParse(receiveString,out scondEventId);
+                    if (result )
+                    {
+                        if(scondEventId == (int)Event.Event_ID.Game_End)
+                        {
+                            context.Post(_ =>
+                            {
+                                 Initiate.Fade("ResultScene", Color.black, 1.0f);
+                            }, null);
+                        }
+                        else if(scondEventId == (int)Event.Event_ID.Next_Round)
+                        {
+                            context.Post(_ =>
+                            {
+                                PlayerManager player = GameObject.Find("MainPlayer").GetComponent<PlayerManager>();
+                                player.isSetExchange = false;
+                                player.oxygen = 50;
+                                player.isGoal = false;
+                                player.isStart = true;
+                                player.isDiceRoll = false;
+                                player.isDiceRollUI = true;
+                                player.direction = 1;
+                                GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+                                gameManager.turn = 0;
+                                gameManager.BackButton.GetComponent<Button>().interactable = true;
+                                CardManager cardManager = GameObject.Find("CardManager").GetComponent<CardManager>();
+                                cardManager.SetHand();
+                            }, null);
+                        }
+                    }
+
                     break;
                     case(int)Event.Event_ID.Quit_Player:
                     int quitPlayerID = receiveBuffer[1];
@@ -312,6 +403,16 @@ public class Client : MonoBehaviour
                         }
                     }, null);
                     break;
+                    case (int)Event.Event_ID.Set_Target:
+                    context.Post(_ =>
+                    {
+
+                        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+                        gameManager.target = receiveBuffer[1];
+                        TarGetItemsUIManager tarGetItemsUIManager = GameObject.Find("TarGetItems").GetComponent<TarGetItemsUIManager>();
+                        tarGetItemsUIManager.SetTarget();
+                    }, null);
+                    break;
             }
             // Unityで用意しているメソッドは、ワーカースレッド内で起動不可なものもある。
             // Instantiateはメインスレッドでないと実行不可。
@@ -326,6 +427,7 @@ public class Client : MonoBehaviour
     /// </summary>
     public async void SendComment(int event_ID)
     {
+       
         // サーバーと接続できていない場合はデータを送らないようにする
         if (!isConnected)
         {
@@ -347,13 +449,14 @@ public class Client : MonoBehaviour
                 break;
             case (int)Event.Event_ID.Dice:
                 DIce dIce = new DIce();
-                if (/*ここにダイス変化の条件を入れる*/false)
+                if (GameObject.Find("CardManager").GetComponent<CardManager>().luckyDice)
                 {
 
                     dIce.Dice1Max = 3;
                     dIce.Dice1Min = 1;
                     dIce.Dice2Max = 6;
                     dIce.Dice2Min = 4;
+                    GameObject.Find("CardManager").GetComponent<CardManager>().luckyDice =false;
                 }
                 else if ( true)
                 { 
@@ -370,10 +473,12 @@ public class Client : MonoBehaviour
                 sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().id).ToArray();
                 break;
             case (int)Event.Event_ID.Card:
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
                 sendBuffer = sendBuffer.Prepend((byte)CardId).ToArray();
                 sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().id).ToArray();
                 break;
             case (int)Event.Event_ID.Change_Direction:
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
                 sendBuffer = sendBuffer.Prepend((byte)GetComponent<PlayerManager>().id).ToArray();
                 break;
             case (int)Event.Event_ID.Look:
@@ -408,9 +513,15 @@ public class Client : MonoBehaviour
                 sendBuffer = Encoding.UTF8.GetBytes(sendString);
                 break;
             case (int)Event.Event_ID.Goal:
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
+                break;
+                case (int)Event.Event_ID.Clear:
+                
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
+                sendBuffer = sendBuffer.Prepend((byte)MainPlayerID).ToArray();
                 break;
             default:
-
+                sendBuffer = Encoding.UTF8.GetBytes(sendString);
                 break;
         }
        

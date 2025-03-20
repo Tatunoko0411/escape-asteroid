@@ -17,7 +17,7 @@ public class ConectManager : MonoBehaviour
     public bool PlayerActive4;
     bool startCountDown = false;
 
-    int remainingTime = 1;
+    int remainingTime = 5;
 
     [SerializeField] GameObject remainingText;
     // Start is called before the first frame update
@@ -88,7 +88,7 @@ public class ConectManager : MonoBehaviour
             }
         }
 
-        if(PlayerActive1 && !startCountDown)
+        if(PlayerActive1 && PlayerActive2 && PlayerActive3 && PlayerActive4 && !startCountDown)
         {
             StartCoroutine("CountDownTimer");
             startCountDown = true;

@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] public  List<GameObject> Tire2List;
     [SerializeField] public  List<GameObject> Tire3List;
 
+    public List<int> GoalTableNumber;
+
     [SerializeField] public List<GameObject> TarGetItems;
     public int target;
 
@@ -104,7 +106,7 @@ public class GameManager : MonoBehaviour
                     kinds = Random.Range(0, 3);
                 }
                // ExchangeManager exchangeManager = GameObject.Find("ExchangeManager").GetComponent<ExchangeManager>();
-                PlayerManager.ItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
+                PlayerManager.HaveItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
                 Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
                 GameObject textObject = Instantiate(
                                          ItemManagerList[Tire][kinds],
@@ -125,7 +127,7 @@ public class GameManager : MonoBehaviour
                     {
 
 
-                        PlayerManager.ItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
+                        PlayerManager.HaveItemManagers[Tire].Add(ItemManagerList[Tire][kinds]);
                         Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
                         textObject = Instantiate(
                                                 ItemManagerList[Tire][kinds],

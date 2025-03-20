@@ -13,8 +13,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] List<GameObject> IsPlayingUI;
     [SerializeField] List<GameObject> IsDiceRollUI;
     [SerializeField] List<GameObject> IsGetItemManagerUI;
+    GameObject[] Cards;
     void Start()
     {
+        Cards = GameObject.FindGameObjectsWithTag("Card");
 
     }
 
@@ -41,12 +43,22 @@ public class UIManager : MonoBehaviour
             {
                 r.SetActive(true);
             }
+
+            foreach (GameObject r in Cards)
+            {
+                r.transform.position = new Vector3(r.transform.position.x, 150.0f, r.transform.position.z);
+            }
         }
         else
         {
             foreach (GameObject r in IsDiceRollUI)
             {
                 r.SetActive(false);
+            }
+
+            foreach (GameObject r in Cards)
+            {
+                r.transform.position =new Vector3(r.transform.position.x,-750.0f,r.transform.position.z);
             }
         }
         if (PlayerManager.isGetItemManager)

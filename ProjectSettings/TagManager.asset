@@ -13,6 +13,7 @@ TagManager:
   - CheckBox
   - Exchange
   - Body
+  - Card
   layers:
   - Default
   - TransparentFX

@@ -154,264 +154,267 @@ public class CardManager : MonoBehaviour
     public void CardAction(int CardNum,int playerId)
     {
         int haveCardSet = 0;
-        int playCard = 0;
+        //int playCard = 0;
         if (player.hand > 0)    //カードの残数確認
         {
-            if (CardNum == 1)    //各カードの使用判定
-            {
-                if (usedCard1 == false)
-                {
-                    //使用するカードのidを処理用の変数に代入
-                    playCard = player.handCard_id;
-                    usedCard1 = true;//カードを使用した状態にする
-                }
-                else
-                {
-                    Debug.Log("このカードはもう使用されました");
-                    return;
-                }
-            }
-            else if (CardNum == 2)
-
-            {
-                if (usedCard2 == false)
-                {
-                    playCard = player.handCard_id_2;
-                    usedCard2 = true;
-                }
-                else
-                {
-                    Debug.Log("このカードはもう使用されました");
-                    return;
-                }
-
-            }
-            else if (CardNum == 3)
-            {
-                if (usedCard3 == false)
-                {
-                    playCard = player.handCard_id_3;
-                    usedCard3 = true;
-                }
-                else
-                {
-                    Debug.Log("このカードはもう使用されました");
-                    return;
-                }
-            }
 
 
-            Debug.Log($"{Card[playCard - 1].id}使用、{Card[playCard - 1].name}");
-            switch (playCard)    //使うカードの効果判定、処理
+
+           //Debug.Log($"{Card[playCard].id}使用、{Card[playCard].name}");
+            switch (CardNum)    //使うカードの効果判定、処理
             {
                 //各カードの効果処理(カードのidにて判定)
                 case 1:
+                    if (player.id == playerId)
+                    {
+                        //片方のサイコロを456賽にする
+                        //456賽はdice2で
 
-                    //片方のサイコロを456賽にする
-                    //456賽はdice2で
-
-                    luckyDice = true;
-                    CardNum1.SetActive(false);
+                        luckyDice = true;
+                        CardNum1.SetActive(false);
+                    }
                     break;
 
                 case 2:
 
                     //酸素を消費せず行動可能
-                    breathHold = true;
-                    CardNum2.SetActive(false);
+                    //breathHold = true;
+                    if (player.id == playerId)
+                    {
+                        breathHold = true;
+                        CardNum2.SetActive(false);
+                    }
                     break;
                 case 3:
 
                     player.oxygen += 3;
-                    CardNum3.SetActive(false);
+                    if (player.id == playerId)
+                    {
+                        CardNum3.SetActive(false);
+                    }
                     break;
 
                 case 4:
 
-                    //他プレイヤーを選択肢人マス戻す
-                    player.BackPlayer(1);
-                    CardNum4.SetActive(false);
+                    GameObject[] playerManagers = GameObject.FindGameObjectsWithTag("Player");
+                    for (int i = 0; i < playerManagers.Length; i++)
+                    {
+                        PlayerManager player = playerManagers[i].GetComponent<PlayerManager>();
+                        //他プレイヤーを選択肢人マス戻す
+                        if (player.id != playerId)
+                        {
+                            player.BackPlayer(1);
+                        }
+                    }
+                    if (player.id == playerId)
+                    {
+                        CardNum4.SetActive(false);
+                    }
                     break;
 
                 case 5:
-
-                    randAns = Random.Range(1, 3);
-                    player.oxygen -= randAns;
-                    Debug.Log($"{randAns}の酸素が放出された");
-                    CardNum5.SetActive(false);
+                    if (player.id == playerId)
+                    {
+                        randAns = Random.Range(1, 3);
+                        player.oxygen -= randAns;
+                        Debug.Log($"{randAns}の酸素が放出された");
+                        Client client = GameObject.Find("MainPlayer").GetComponent<Client>();
+                        client.SendComment((int)Event.Event_ID.Oxygen);
+                        CardNum5.SetActive(false);
+                    }
                     break;
                 case 6:
                     //gamemanagerにて処理
 
                     //持続効果、アイテム獲得時一定確率でアイテムを複製
-                    luckyCharm = true;
-                    CardNum6.SetActive(false);
+                    if (player.id == playerId)
+                    {
+                        luckyCharm = true;
+                        CardNum6.SetActive(false);
+                    }
                     break;
 
                 case 7:
 
                     //diceにて処理
                     //帰還時のみ使用可能、ダイスの合計値*2進める
-                    if (player.direction <= -1)
+                    if (player.id == playerId)
                     {
-                        homingInstinct = true;//カード使用フラグ
-                    }
-                    else
-                    {
+                        if (player.direction <= -1)
+                        {
+                            homingInstinct = true;//カード使用フラグ
+                        }
+                        else
+                        {
 
-                        if (CardNum == 1)
-                        {
-                            usedCard1 = false;
+                            if (CardNum == 1)
+                            {
+                                usedCard1 = false;
+                            }
+                            else if (CardNum == 2)
+                            {
+                                usedCard2 = false;
+                            }
+                            else if (CardNum == 3)
+                            {
+                                usedCard3 = false;
+                            }
+                            Debug.Log("条件を満たしてないので使用できません");
+                            player.hand++;
                         }
-                        else if (CardNum == 2)
-                        {
-                            usedCard2 = false;
-                        }
-                        else if (CardNum == 3)
-                        {
-                            usedCard3 = false;
-                        }
-                        Debug.Log("条件を満たしてないので使用できません");
-                        player.hand++;
+                        CardNum7.SetActive(false);
                     }
-                    CardNum7.SetActive(false);
                     break;
 
                 case 8:
 
                     //継続効果、高ティアへのアイテム交換に必要な素材数を減少
-                    goodShoping = true;
-                    exchangeManager.ReqNumberLow = 2;
-                    Debug.Log($"変換必要個数{exchangeManager.ReqNumberLow}");
-                    CardNum8.SetActive(false);
+                    if (player.id == playerId)
+                    {
+                        goodShoping = true;
+                        exchangeManager.ReqNumberLow = 2;
+                        Debug.Log($"変換必要個数{exchangeManager.ReqNumberLow}");
+                        CardNum8.SetActive(false);
+                    }
                     break;
                 case 9:
-                    int Tire = 0;
-                    int kinds = 0;
-                    //player = GameObject.Find($"Player").GetComponent<Player>();
-
-
-                    //ティア0素材アイテムを獲得、一定確率でティア1アイテム
-                    randAns = Random.Range(randMin, randMax);
-
-                    //約25%でティア1の素材獲得
-                    if (randAns >= 14)//25%は12.5なので13まで獲得とする
+                    if (player.id == playerId)
                     {
-                        Tire = 0;
+                        int Tire = 0;
+                        int kinds = 0;
+                        //player = GameObject.Find($"Player").GetComponent<Player>();
+
+
+                        //ティア0素材アイテムを獲得、一定確率でティア1アイテム
+                        randAns = Random.Range(randMin, randMax);
+
+                        //約25%でティア1の素材獲得
+                        if (randAns >= 14)//25%は12.5なので13まで獲得とする
+                        {
+                            Tire = 0;
+                        }
+                        else
+                        {
+                            Tire = 1;
+                        }
+
+                        kinds = Random.Range(0, 4);
+
+
+                        player.HaveItemManagers[Tire].Add(gameManager.ItemManagerList[Tire][kinds]);
+                        Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
+                        GameObject textObject = Instantiate(
+                                                 gameManager.ItemManagerList[Tire][kinds],
+                                                 gameManager.parentGameObject.transform.position,
+                                                 Quaternion.identity,
+                                                 gameManager.parentGameObject.transform
+                                                 );
+
+
+                        CardNum9.SetActive(false);
                     }
-                    else
-                    {
-                        Tire = 1;
-                    }
-
-                    kinds = Random.Range(0, 4);
-
-
-                    player.ItemManagers[Tire].Add(gameManager.ItemManagerList[Tire][kinds]);
-                    Debug.Log($"アイテムを手に入れた!Tire{Tire},{kinds}");
-                    GameObject textObject = Instantiate(
-                                             gameManager.ItemManagerList[Tire][kinds],
-                                             gameManager.parentGameObject.transform.position,
-                                             Quaternion.identity,
-                                             gameManager.parentGameObject.transform
-                                             );
-
-
-                    CardNum9.SetActive(false);
                     break;
 
                 case 10:
-                    if (player.hand == 1)//使用可能な手札がないときは変更しない
+                    if (player.id == playerId)
                     {
-                        Debug.Log("入れ替える手札がありません");
-                        return;
-                    }
-                    else
-                    {
-                        CardNum1.SetActive(false);
-                        CardNum2.SetActive(false);
-                        CardNum3.SetActive(false);
-                        CardNum4.SetActive(false);
-                        CardNum5.SetActive(false);
-                        CardNum6.SetActive(false);
-                        CardNum7.SetActive(false);
-                        CardNum8.SetActive(false);
-                        CardNum9.SetActive(false);
-                        CardNum10.SetActive(false);
-                        CardNum11.SetActive(false);
-
-                        for (int i = 0; i < player.hand - 1; i++)
+                        if (player.hand == 1)//使用可能な手札がないときは変更しない
                         {
-                           int HandNum = Random.Range(1, Card.Length + 1);
+                            Debug.Log("入れ替える手札がありません");
+                            return;
+                        }
+                        else
+                        {
+                            CardNum1.SetActive(false);
+                            CardNum2.SetActive(false);
+                            CardNum3.SetActive(false);
+                            CardNum4.SetActive(false);
+                            CardNum5.SetActive(false);
+                            CardNum6.SetActive(false);
+                            CardNum7.SetActive(false);
+                            CardNum8.SetActive(false);
+                            CardNum9.SetActive(false);
+                            CardNum10.SetActive(false);
+                            CardNum11.SetActive(false);
 
-
-                            switch (HandNum)
+                            for (int i = 0; i < player.hand ; i++)
                             {
-                                case 1:
-                                    CardNum1.SetActive(true);
-                                    CardNum1.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 2:
-                                    CardNum2.SetActive(true);
-                                    CardNum2.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 3:
-                                    CardNum3.SetActive(true);
-                                    CardNum3.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 4:
-                                    CardNum4.SetActive(true);
-                                    CardNum4.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 5:
-                                    CardNum5.SetActive(true);
-                                    CardNum5.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 6:
-                                    CardNum6.SetActive(true);
-                                    CardNum6.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 7:
-                                    CardNum7.SetActive(true);
-                                    CardNum7.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 8:
-                                    CardNum8.SetActive(true);
-                                    CardNum8.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 9:
-                                    CardNum9.SetActive(true);
-                                    CardNum9.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 10:
-                                    CardNum10.SetActive(true);
-                                    CardNum10.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
-                                case 11:
-                                    CardNum11.SetActive(true);
-                                    CardNum11.transform.position = new Vector3(760 + (200 * i), 120, 1);
-                                    break;
+                                int HandNum = Random.Range(1, Card.Length + 1);
+
+
+                                switch (HandNum)
+                                {
+                                    case 1:
+                                        CardNum1.SetActive(true);
+                                        CardNum1.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 2:
+                                        CardNum2.SetActive(true);
+                                        CardNum2.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 3:
+                                        CardNum3.SetActive(true);
+                                        CardNum3.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 4:
+                                        CardNum4.SetActive(true);
+                                        CardNum4.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 5:
+                                        CardNum5.SetActive(true);
+                                        CardNum5.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 6:
+                                        CardNum6.SetActive(true);
+                                        CardNum6.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 7:
+                                        CardNum7.SetActive(true);
+                                        CardNum7.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 8:
+                                        CardNum8.SetActive(true);
+                                        CardNum8.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 9:
+                                        CardNum9.SetActive(true);
+                                        CardNum9.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 10:
+                                        CardNum10.SetActive(true);
+                                        CardNum10.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+                                    case 11:
+                                        CardNum11.SetActive(true);
+                                        CardNum11.transform.position = new Vector3(760 + (230 * i), 150, 1);
+                                        break;
+
+                                }
+
+
+
 
                             }
 
-
-
-
                         }
-
+                        CardNum10.SetActive(false);
                     }
-                    CardNum10.SetActive(false);
                     break;
                 case 11:
+                    if (player.id != playerId)
+                    {
+                        //2d2に変更
+                        dice.Dice1Max = 2;
+                        dice.Dice2Max = 2;
 
-                    //2d2に変更
-                    dice.Dice1Max = 2;
-                    dice.Dice2Max = 2;
+                        speedlimit = true;//カード使用フラグ
 
-                    speedlimit = true;//カード使用フラグ
-
-                    Debug.Log($"dice１最大値{dice.Dice1Max}:dice２最大値{dice.Dice2Max}");
-                    CardNum11.SetActive(false);
+                        Debug.Log($"dice１最大値{dice.Dice1Max}:dice２最大値{dice.Dice2Max}");
+                    }
+                    if (player.id == playerId)
+                    {
+                        CardNum11.SetActive(false);
+                    }
                     break;
 
             }
@@ -491,47 +494,47 @@ public class CardManager : MonoBehaviour
             {
                 case 1:
                     CardNum1.SetActive(true);
-                    CardNum1.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum1.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 2:
                     CardNum2.SetActive(true);
-                    CardNum2.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum2.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 3:
                     CardNum3.SetActive(true);
-                    CardNum3.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum3.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 4:
                     CardNum4.SetActive(true);
-                    CardNum4.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum4.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 5:
                     CardNum5.SetActive(true);
-                    CardNum5.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum5.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 6:
                     CardNum6.SetActive(true);
-                    CardNum6.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum6.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 7:
                     CardNum7.SetActive(true);
-                    CardNum7.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum7.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 8:
                     CardNum8.SetActive(true);
-                    CardNum8.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum8.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 9:
                     CardNum9.SetActive(true);
-                    CardNum9.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum9.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 10:
                     CardNum10.SetActive(true);
-                    CardNum10.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum10.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
                 case 11:
                     CardNum11.SetActive(true);
-                    CardNum11.transform.position = new Vector3(760 + (200 * i), 120, 1);
+                    CardNum11.transform.position = new Vector3(760 + (230 * i), 150, 1);
                     break;
 
             }
@@ -571,7 +574,7 @@ public class CardManager : MonoBehaviour
             luckyDice = false;//幸運のサイコロ
 
             //酸素計算処理終了後に効果無効
-            breathHold = true;//息止め
+            breathHold = false;//息止め
         }
     }
 

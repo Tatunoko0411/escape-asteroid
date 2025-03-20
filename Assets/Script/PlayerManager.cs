@@ -1,6 +1,7 @@
 using Assets.Script;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,7 @@ public class PlayerManager : MonoBehaviour
     {0,0,0,0};
     [SerializeField]public List<Texture> textures;
     [SerializeField]public SkinnedMeshRenderer skinnedMeshRenderer;
+    [SerializeField] Animator PlayerAnim;
     public int direction = 1;
     private int waitTime = 0;
     private Vector3 TargetPos;
@@ -35,14 +37,19 @@ public class PlayerManager : MonoBehaviour
 
     public int handCard_id_3;
 
+    [SerializeField] public List<List<GameObject>> HaveItemManagers = new List<List<GameObject>>()
+   {
+       new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
+   };
+
     [SerializeField] public  List<List<GameObject>> ItemManagers =new List<List<GameObject>>()
    {
        new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
    };
 
     [SerializeField] public GameObject Dice;
-
-    public int oxygen = 100;
+    [SerializeField] Text oxText;
+    public int oxygen = 10;
     // Start is called before the first frame update
     void Start()
     {
@@ -58,81 +65,113 @@ public class PlayerManager : MonoBehaviour
     {
         GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        if (id == gameManager.turn)
+     
+        if (!isSetExchange || transform.name != "MainPlayer")
         {
-            if (!isGoal)
+            if (oxygen <= 0)
             {
-                if (!isSetDice)
+                //強制終了
+                GameEnd();
+                return;
+            }
+            if (id == gameManager.turn || transform.name != "MainPlayer")
+            {
+                if (!isGoal)
                 {
-                    isDiceRollUI = true;
-
-                    isSetDice = true;
-                }
-
-                if (isDiceRoll)
-                {
-                    //プレイヤーの移動
-                    if (Move > 0)
+                    if (!isSetDice)
                     {
-                        if (waitTime <= 0)
+                        isDiceRollUI = true;
+
+                        isSetDice = true;
+                    }
+
+                    if (isDiceRoll)
+                    {
+                        //プレイヤーの移動
+                        if (Move > 0 || transform.name != "MainPlayer")
                         {
-
-                            if ((gameManager.trouts.Count <= trout + direction) ||
-                                (0 > trout + direction))
+                            if (waitTime <= 0)
                             {
-                                Move = 0;
-                                ChangeDirection();
-                                //素材取得ターンに入る
-                                if (transform.name == "MainPlayer")
+
+                                if ((gameManager.trouts.Count <= trout + direction) ||
+                                    (0 > trout + direction))
                                 {
-                                    ChoiceGetItemManager();
-                                }
-                                return;
-                            }
-                            else
-                            {
-                                TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
-                                TargetPos.y = 0.3f;
-                            }
-
-                            transform.position = Vector3.MoveTowards
-                                  (transform.position,
-                                  TargetPos,
-                                  0.01f + Time.deltaTime
-                                  );
-
-
-                            if (transform.position == TargetPos)
-                            {
-                                Move--;
-                                trout += direction;
-                                waitTime = 30;
-                                if (Move == 0)
-                                {
+                                    Move = 0;
+                                    ChangeDirection();
+                                    //素材取得ターンに入る
                                     if (transform.name == "MainPlayer")
                                     {
                                         ChoiceGetItemManager();
                                     }
+                                    return;
+                                }
+                                else
+                                {
+                                    TargetPos = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[trout + direction].transform.position);
+                                    //TargetPos.y = 0.3f;
+                                    jump();
+                                }
+
+                                transform.position = Vector3.MoveTowards
+                                      (transform.position,
+                                      TargetPos,
+                                      0.01f + Time.deltaTime
+                                      );
+
+
+                                if (transform.position == TargetPos)
+                                {
+                                    Move--;
+                                    trout += direction;
+                                    waitTime = 30;
+                                    if (Move == 0)
+                                    {
+                                        if (transform.name == "MainPlayer")
+                                        {
+                                            ChoiceGetItemManager();
+                                        }
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            waitTime--;
-                        }
+                            else
+                            {
+                                waitTime--;
+                            }
 
+                        }
+                    }
+                }
+                else if (!isGoalSend)
+                {
+                    if (transform.name == "MainPlayer")
+                    {
+                        GetComponent<Client>().SendComment((int)Event.Event_ID.Turn_End);
+                        isGoalSend = true;
                     }
                 }
             }
-            else if(!isGoalSend)
+            else
             {
-                GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
-                isGoalSend = true;
+                isGoalSend = false;
+            }
+            if (transform.name == "MainPlayer")
+            {
+                oxText.text = $"{oxygen}";
+
+                if (oxygen >= 30)
+                {
+                    oxText.color = new Color(0.4213836f, 0.8542393f, 1, 1);
+                }
+                else if (oxygen < 30 && oxygen >= 10)
+                {
+                    oxText.color = new Color(0.990566f, .9220721f, 0.2865788f, 1);
+                }
+                else if (oxygen >= 30)
+                {
+                    oxText.color = new Color(0.9528302f, 0.2037497f, 0.2037497f, 1);
+                }
             }
         }
-       
-
-
     }
 
     public void ChangeDirection()
@@ -142,6 +181,7 @@ public class PlayerManager : MonoBehaviour
        // direction = -direction;
        gameManager.BackButton.GetComponent<Button>().interactable = false;
     }
+
     public void MovePlayerManager(int roll,int dice1,int dice2)
     {
         Dice dice = Dice.GetComponent<Dice>();
@@ -199,11 +239,11 @@ public class PlayerManager : MonoBehaviour
 
     public void reduceOxygen()
     {
-        CardManager cardManager = GetComponent<CardManager>();
+        CardManager cardManager =GameObject.Find("CardManager").GetComponent<CardManager>();
         int ItemCount = 0;
-        for(int i = 0;i<ItemManagers.Count;i++)
+        for(int i = 0;i< HaveItemManagers.Count;i++)
         {
-            ItemCount += ItemManagers[i].Count;
+            ItemCount += HaveItemManagers[i].Count;
         }
 
         if (cardManager.breathHold == true)
@@ -218,14 +258,50 @@ public class PlayerManager : MonoBehaviour
 
     public void DiceRoll()
     {
+        CardManager cardManager = GameObject.Find("CardManager").GetComponent<CardManager>();
         int ItemCount = 0;
-        for (int i = 0; i < ItemManagers.Count; i++)
+        for (int i = 0; i < HaveItemManagers.Count; i++)
         {
-            ItemCount += ItemManagers[i].Count;
+            ItemCount += HaveItemManagers[i].Count;
+        }
+
+        if (cardManager.breathHold == true)
+        {
+            ItemCount = 0;
+            cardManager.breathHold = false;
         }
         oxygen -= ItemCount;
         GetComponent<Client>().SendComment((int)Event.Event_ID.Dice);
     }
+
+    public void  AddItems()
+    {
+        for (int i = 0; i < HaveItemManagers.Count; i++)
+        {
+            if (HaveItemManagers[i] != null)
+            {
+                for (int j = 0; j < HaveItemManagers[i].Count; j++)
+                {
+                    ItemManagers[i].Add(HaveItemManagers[i][j]);
+                }
+            }
+        }
+    }
+    public void jump()
+    {
+        PlayerAnim.SetTrigger("jump");
+    }
+
+    public void GameEnd()
+    {
+        this.transform.position = (Vector3)(GameObject.Find("GameManager").GetComponent<GameManager>().trouts[0].transform.position);
+        HaveItemManagers = new List<List<GameObject>>
+        {
+            new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
+        };
+    }
+
+        
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "based")
@@ -233,7 +309,11 @@ public class PlayerManager : MonoBehaviour
             if (isStart)
             {
                 isGoal = true;
-                GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
+                if (transform.name == "MainPlayer")
+                {
+                    GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
+                    AddItems();
+                }
                 Debug.Log("ゴールしました");
             }
             else
