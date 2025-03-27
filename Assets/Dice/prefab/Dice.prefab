@@ -642,6 +642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 084dcdd0ec88b554ca87db04c4f8e11b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerManager: {fileID: 0}
 --- !u!1 &2673195164578269713
 GameObject:
   m_ObjectHideFlags: 0
@@ -1831,6 +1832,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: cf9f4dbf1cb1d2d4bb87554ad2867ff6, type: 3}
       propertyPath: m_Name
       value: Dice1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cf9f4dbf1cb1d2d4bb87554ad2867ff6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

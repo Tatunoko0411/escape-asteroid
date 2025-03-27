@@ -49,7 +49,9 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField] public GameObject Dice;
     [SerializeField] Text oxText;
-    public int oxygen = 10;
+  
+    public int oxygen = 50;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -70,6 +72,7 @@ public class PlayerManager : MonoBehaviour
         {
             if (oxygen <= 0)
             {
+                oxygen = 0;
                 //強制終了
                 GameEnd();
                 return;
@@ -88,7 +91,7 @@ public class PlayerManager : MonoBehaviour
                     if (isDiceRoll)
                     {
                         //プレイヤーの移動
-                        if (Move > 0 || transform.name != "MainPlayer")
+                        if (Move > 0 )
                         {
                             if (waitTime <= 0)
                             {
@@ -115,7 +118,7 @@ public class PlayerManager : MonoBehaviour
                                 transform.position = Vector3.MoveTowards
                                       (transform.position,
                                       TargetPos,
-                                      0.01f + Time.deltaTime
+                                      0.1f + Time.deltaTime
                                       );
 
 
@@ -166,7 +169,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     oxText.color = new Color(0.990566f, .9220721f, 0.2865788f, 1);
                 }
-                else if (oxygen >= 30)
+                else if (oxygen <= 10)
                 {
                     oxText.color = new Color(0.9528302f, 0.2037497f, 0.2037497f, 1);
                 }
@@ -213,6 +216,32 @@ public class PlayerManager : MonoBehaviour
             Destroy(r);
         }
 
+        for (int i = 0; i < HaveItemManagers.Count; i++)
+        {
+            if (HaveItemManagers[i] != null)
+            {
+                foreach (GameObject Item in HaveItemManagers[i])
+                {
+                    GameObject textObject = Instantiate(
+                                             Item,
+                                             gameManager.transform.position,
+                                             Quaternion.identity,
+                                             gameManager.parentGameObject.transform
+                                             );
+                }
+            }
+        }
+    }
+    public void SetItemManager()
+    {//
+        GameObject[] ActivItemManagers = GameObject.FindGameObjectsWithTag("Item");
+        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        foreach (GameObject r in ActivItemManagers)
+        {
+            Destroy(r);
+        }
+
         for (int i = 0; i < ItemManagers.Count; i++)
         {
             if (ItemManagers[i] != null)
@@ -229,7 +258,6 @@ public class PlayerManager : MonoBehaviour
             }
         }
     }
-
     public void LockPlayer(int PlayerID)
     {
        Client client = GetComponent<Client>();
@@ -299,6 +327,7 @@ public class PlayerManager : MonoBehaviour
         {
             new List<GameObject>(), new List<GameObject>(),new List<GameObject>(),new List<GameObject>()
         };
+        GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
     }
 
         
@@ -312,7 +341,9 @@ public class PlayerManager : MonoBehaviour
                 if (transform.name == "MainPlayer")
                 {
                     GetComponent<Client>().SendComment((int)Event.Event_ID.Goal);
+                   
                     AddItems();
+                    SetItemManager();
                 }
                 Debug.Log("ゴールしました");
             }
@@ -326,10 +357,10 @@ public class PlayerManager : MonoBehaviour
 
         if (other.gameObject.tag == "Level0")
         {
-            probability[0] = 0;
+            probability[0] = 80;
             probability[1] = 20;
             probability[2] = 0;
-            probability[3] = 80;
+            probability[3] = 0;
         }
 
         if (other.gameObject.tag == "Level1")

@@ -19,7 +19,8 @@ public class TarGetItemsUIManager : MonoBehaviour
         for (int i = 0; i < gameManager.GoalTableNumber.Count; i++)
         {
             Target target = gameManager.TarGetItems[gameManager.target].GetComponent<Target>();
-            Instantiate(TarGetItems[gameManager.target], TarGetItemspos[i].transform);
+            GameObject gameObject = Instantiate(TarGetItems[gameManager.GoalTableNumber[i]], TarGetItemspos[i].transform);
+            gameObject.transform.tag = "Untagged";
             GameObject targetCostspos = TarGetItemspos[i].transform.Find("targetCosts").gameObject;
             for (int j = 0; j < target.targetCosts.Count; j++)
             {

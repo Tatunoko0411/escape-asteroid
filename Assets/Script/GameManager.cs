@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] public GameObject cardManagerObj;
     CardManager cardManager;
-
+    [SerializeField] public List<Text> HaveItemTexts;
     void Start()
     {
         ItemManagerList.Add(Tire0List);

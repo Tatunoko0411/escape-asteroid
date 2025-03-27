@@ -155,8 +155,6 @@ public class CardManager : MonoBehaviour
     {
         int haveCardSet = 0;
         //int playCard = 0;
-        if (player.hand > 0)    //カードの残数確認
-        {
 
 
 
@@ -419,9 +417,12 @@ public class CardManager : MonoBehaviour
 
             }
 
+        if (player.id == playerId)
+        {
             player.hand -= 1;
-
         }
+
+
         else
         {//手札を全て使用された場合
             Debug.Log("手札がありません");

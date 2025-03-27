@@ -238,7 +238,9 @@ public class ExchangeManager : MonoBehaviour
         {
             player.ItemManagers[ExchangeItemManager.GetComponent<ItemManager>().Tire].Add(exchangeManager.ExchangeItemManager);
         }
+
         GameObject[] ItemManagers = GameObject.FindGameObjectsWithTag("CheckBox");
+
         if (ItemManagers.Length > 0)
         {
             foreach (GameObject r in ItemManagers)
